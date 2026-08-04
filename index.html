@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake Detection Management System (FDMS) - Next-Gen Social Audit</title>
+  <meta name="description" content="AI-powered Fake Engagement Detection & Management System for Social Media Analytics, Bot Detection, & Risk Monitoring.">
+  
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Master Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div id="app-root">
+
+  <!-- ==========================================================================
+       1. LANDING PAGE VIEW
+       ========================================================================== -->
+  <section id="view-landing" class="app-view active">
+    <!-- Landing Navigation -->
+    <nav class="landing-nav">
+      <a href="#" class="brand-logo" data-view="view-landing">
+        <div class="brand-icon"><i class="fas fa-shield-virus"></i></div>
+        <span>FDMS<span class="gradient-text">.AI</span></span>
+      </a>
+      <ul class="landing-menu">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#stats">Live Threat Telemetry</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#" data-view="view-database">Database Architecture</a></li>
+      </ul>
+      <div class="landing-actions">
+        <button class="btn btn-secondary btn-sm" data-view="view-login"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <button class="btn btn-primary btn-sm" data-view="view-register"><i class="fas fa-user-plus"></i> Register</button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-tag">
+        <i class="fas fa-bolt"></i> Next-Gen Social Engagement Integrity Platform
+      </div>
+      <h1 class="hero-title">
+        Detect & Neutralize <br>
+        <span class="gradient-text">Fake Social Media Engagement</span>
+      </h1>
+      <p class="hero-desc">
+        Empower brands, platforms, and analysts with real-time AI bot identification, click-farm cluster detection, fake follower forensic auditing, and automated risk scoring across top social platforms.
+      </p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" data-view="view-detection">
+          <i class="fas fa-radar"></i> Detect Fake Engagement Now
+        </button>
+        <button class="btn btn-secondary btn-lg" data-view="view-dashboard">
+          <i class="fas fa-chart-line"></i> Launch Dashboard
+        </button>
+      </div>
+
+      <!-- Stats Counters Grid -->
+      <div id="stats" class="stats-grid">
+        <div class="glass-card stat-card">
+          <div class="stat-number gradient-text">24.8M+</div>
+          <div class="stat-label">Bot Accounts Flagged</div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-number gradient-text-pink">99.4%</div>
+          <div class="stat-label">AI Detection Accuracy</div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-number gradient-text">150K+</div>
+          <div class="stat-label">Creators Audited</div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-number gradient-text-pink">1.2M</div>
+          <div class="stat-label">Automated Reports Generated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="features-section">
+      <div class="section-header">
+        <h2 class="section-title">Engineered For <span class="gradient-text">Uncompromising Accuracy</span></h2>
+        <p class="section-subtitle">Deep neural network models scan multi-platform signals to expose artificial inflation.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="glass-card feature-card">
+          <div class="feature-icon"><i class="fas fa-users-slash"></i></div>
+          <h3 class="feature-title">Bot & Fake Follower Audit</h3>
+          <p class="feature-desc">Deep profile analysis examining account age, follower-to-following ratios, avatar synthesis, and inactive clusters.</p>
+        </div>
+        <div class="glass-card feature-card">
+          <div class="feature-icon"><i class="fas fa-heart-circle-xmark"></i></div>
+          <h3 class="feature-title">Fake Likes & Click Farm Detection</h3>
+          <p class="feature-desc">Identify irregular timestamp spikes, sudden bot like surges, and automated engagement pods in real-time.</p>
+        </div>
+        <div class="glass-card feature-card">
+          <div class="feature-icon"><i class="fas fa-comment-slash"></i></div>
+          <h3 class="feature-title">Spam Comment Analysis</h3>
+          <p class="feature-desc">NLP sentiment engines flag repetitive copy-paste comments, bot emojis, and malicious URL drop networks.</p>
+        </div>
+        <div class="glass-card feature-card">
+          <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+          <h3 class="feature-title">Real-Time Threat Heatmaps</h3>
+          <p class="feature-desc">Visualize activity anomalies across time slots and platforms to pinpoint orchestrated manipulation campaigns.</p>
+        </div>
+        <div class="glass-card feature-card">
+          <div class="feature-icon"><i class="fas fa-file-shield"></i></div>
+          <h3 class="feature-title">Automated PDF Audits</h3>
+          <p class="feature-desc">Export court-ready, branded forensic reports summarizing risk scores, key metrics, and creator threat levels.</p>
+        </div>
+        <div class="glass-card feature-card">
+          <div class="feature-icon"><i class="fas fa-database"></i></div>
+          <h3 class="feature-title">Relational Schema Telemetry</h3>
+          <p class="feature-desc">Full 3NF normalized database visualization displaying ER diagrams and database metrics for total transparency.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Section -->
+    <div id="team" class="team-section">
+      <div class="section-header">
+        <h2 class="section-title">Meet Our <span class="gradient-text">Core Cyber Security Team</span></h2>
+        <p class="section-subtitle">World-class AI researchers and cyber security specialists protecting brand integrity.</p>
+      </div>
+
+      <div class="team-grid">
+        <div class="glass-card team-card">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" alt="Alex Vance" class="team-avatar">
+          <h3 class="team-name">Alex Vance</h3>
+          <div class="team-role">Chief AI Architect</div>
+          <p class="team-bio">Specialist in neural network anomaly detection and graph neural network bot cluster analysis.</p>
+        </div>
+        <div class="glass-card team-card">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" alt="Marcus Sterling" class="team-avatar">
+          <h3 class="team-name">Marcus Sterling</h3>
+          <div class="team-role">Lead Security Engineer</div>
+          <p class="team-bio">Expert in click-farm counter-intelligence and real-time social platform API integrations.</p>
+        </div>
+        <div class="glass-card team-card">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80" alt="Elena Rostova" class="team-avatar">
+          <h3 class="team-name">Elena Rostova</h3>
+          <div class="team-role">NLP Threat Analyst</div>
+          <p class="team-bio">Specializes in automated spam text pattern recognition and generative AI comment detection.</p>
+        </div>
+        <div class="glass-card team-card">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" alt="David Chen" class="team-avatar">
+          <h3 class="team-name">David Chen</h3>
+          <div class="team-role">Database Systems Director</div>
+          <p class="team-bio">Architect of multi-terabyte normalized relational storage engines for high-throughput stream processing.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Landing Footer -->
+    <footer class="landing-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="#" class="brand-logo">
+            <div class="brand-icon"><i class="fas fa-shield-virus"></i></div>
+            <span>FDMS<span class="gradient-text">.AI</span></span>
+          </a>
+          <p>Fake Detection Management System - Empowering platforms and creators with AI engagement integrity.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#" data-view="view-dashboard">Dashboard</a></li>
+            <li><a href="#" data-view="view-detection">Fake Detector</a></li>
+            <li><a href="#" data-view="view-analytics">Analytics</a></li>
+            <li><a href="#" data-view="view-database">DB Visualization</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>System Modules</h4>
+          <ul>
+            <li><a href="#" data-view="view-creators">Creator Management</a></li>
+            <li><a href="#" data-view="view-videos">Video Analytics</a></li>
+            <li><a href="#" data-view="view-reports">Audit Reports</a></li>
+            <li><a href="#" data-view="view-admin">Admin Panel</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact & Security</h4>
+          <ul>
+            <li><i class="fas fa-envelope text-neon"></i> security@fdms.cyber</li>
+            <li><i class="fas fa-phone text-neon"></i> +1 (800) 555-FDMS</li>
+            <li><i class="fas fa-location-dot text-neon"></i> Cyber Hub, San Francisco</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 Fake Detection Management System. All rights reserved.</div>
+        <div>Built with Neon Dark Cyber Aesthetics</div>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ==========================================================================
+       2. LOGIN VIEW
+       ========================================================================== -->
+  <section id="view-login" class="app-view">
+    <div class="auth-wrapper">
+      <div class="glass-card-static auth-card">
+        <div class="auth-header">
+          <div class="brand-icon" style="margin:0 auto 1rem;"><i class="fas fa-shield-virus"></i></div>
+          <h2>Welcome Back</h2>
+          <p>Sign in to your FDMS Intelligence Portal</p>
+        </div>
+        <form onsubmit="event.preventDefault(); window.showToast('Login successful! Directing to Dashboard...'); setTimeout(() => document.querySelector('[data-view=\'view-dashboard\']').click(), 800);">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" value="alex.vance@fdms.cyber" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" value="••••••••••••" required>
+          </div>
+          <div class="auth-flex-row">
+            <label class="checkbox-label">
+              <input type="checkbox" checked> Remember me
+            </label>
+            <a href="#" onclick="showToast('Password reset link sent to email');" class="text-neon" style="font-size:0.875rem;">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">
+            <i class="fas fa-sign-in-alt"></i> Login to System
+          </button>
+        </form>
+        <div class="auth-footer-text">
+          Don't have an account? <a href="#" data-view="view-register" class="gradient-text">Register here</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       3. REGISTRATION VIEW
+       ========================================================================== -->
+  <section id="view-register" class="app-view">
+    <div class="auth-wrapper">
+      <div class="glass-card-static auth-card">
+        <div class="auth-header">
+          <div class="brand-icon" style="margin:0 auto 1rem;"><i class="fas fa-user-plus"></i></div>
+          <h2>Create Account</h2>
+          <p>Join the Fake Detection Network</p>
+        </div>
+        <form onsubmit="event.preventDefault(); window.showToast('Registration successful! Please login.'); setTimeout(() => document.querySelector('[data-view=\'view-login\']').click(), 800);">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" placeholder="John Doe" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" placeholder="name@company.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" placeholder="+1 (555) 000-0000" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Account Role Type</label>
+            <select class="form-select">
+              <option value="Analyst">Security Analyst</option>
+              <option value="Admin">System Administrator</option>
+              <option value="User">Standard Platform User</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" placeholder="••••••••••••" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" placeholder="••••••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">
+            <i class="fas fa-user-check"></i> Register Account
+          </button>
+        </form>
+        <div class="auth-footer-text">
+          Already registered? <a href="#" data-view="view-login" class="gradient-text">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       INNER DASHBOARD SHELL (For Views 4 through 12 + Database Visualization)
+       ========================================================================== -->
+  <div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="brand-logo" data-view="view-landing">
+          <div class="brand-icon"><i class="fas fa-shield-virus"></i></div>
+          <span>FDMS<span class="gradient-text">.AI</span></span>
+        </a>
+      </div>
+      <ul class="sidebar-menu">
+        <li class="menu-category">Core Monitoring</li>
+        <li>
+          <a class="sidebar-link active" data-view="view-dashboard">
+            <i class="fas fa-chart-pie"></i> <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-view="view-detection">
+            <i class="fas fa-microchip"></i> <span>Fake Detection</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-view="view-creators">
+            <i class="fas fa-users-gear"></i> <span>Creator Hub</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-view="view-videos">
+            <i class="fas fa-video"></i> <span>Video Analytics</span>
+          </a>
+        </li>
+
+        <li class="menu-category">Intelligence & Reports</li>
+        <li>
+          <a class="sidebar-link" data-view="view-reports">
+            <i class="fas fa-file-invoice"></i> <span>Audit Reports</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-view="view-analytics">
+            <i class="fas fa-chart-line"></i> <span>Deep Analytics</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-view="view-notifications">
+            <i class="fas fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+
+        <li class="menu-category">System & Database</li>
+        <li>
+          <a class="sidebar-link" data-view="view-database">
+            <i class="fas fa-diagram-project"></i> <span>DB Visualization</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-view="view-profile">
+            <i class="fas fa-id-card"></i> <span>User Profile</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-view="view-admin">
+            <i class="fas fa-sliders"></i> <span>Admin Panel</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <button class="btn btn-secondary btn-sm" style="width:100%;" data-view="view-landing">
+          <i class="fas fa-globe"></i> Exit to Public Site
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="global-search-input" class="form-control" placeholder="Search creators, videos, handles...">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button id="theme-toggle-btn" class="topbar-btn" title="Toggle Light/Dark Theme">
+            <i class="fas fa-sun"></i>
+          </button>
+          <button id="topbar-notif-btn" class="topbar-btn" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge"></span>
+          </button>
+
+          <!-- User Profile Dropdown Menu -->
+          <div class="profile-menu">
+            <div id="profile-dropdown-trigger" class="profile-trigger">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar" class="profile-img">
+              <div class="profile-info">
+                <span class="profile-name">Alex Vance</span>
+                <span class="profile-role">Lead Analyst</span>
+              </div>
+              <i class="fas fa-chevron-down text-muted" style="font-size:0.75rem;"></i>
+            </div>
+            <div id="profile-dropdown-menu" class="dropdown-menu">
+              <a class="dropdown-item" data-view="view-profile"><i class="fas fa-user-circle"></i> My Profile</a>
+              <a class="dropdown-item" data-view="view-admin"><i class="fas fa-cog"></i> Settings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" data-view="view-login"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content Views Container -->
+      <main class="page-content">
+
+        <!-- ==========================================================================
+             4. DASHBOARD VIEW
+             ========================================================================== -->
+        <section id="view-dashboard" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Threat & System <span class="gradient-text">Overview</span></h2>
+              <p class="page-subtext">Real-time metrics and artificial engagement telemetry</p>
+            </div>
+            <div style="display:flex;gap:0.75rem;">
+              <button class="btn btn-outline-neon btn-sm" data-view="view-detection"><i class="fas fa-radar"></i> Run Scanning Engine</button>
+              <button class="btn btn-primary btn-sm" onclick="showToast('Compiling new threat report...')"><i class="fas fa-plus"></i> Generate Report</button>
+            </div>
+          </div>
+
+          <!-- Top Metric Cards Grid -->
+          <div class="cards-grid-4">
+            <div class="glass-card metric-card">
+              <div class="metric-icon-box"><i class="fas fa-users"></i></div>
+              <div>
+                <div class="metric-val">1,248</div>
+                <div class="metric-lbl">Total Users</div>
+                <div class="metric-trend trend-up"><i class="fas fa-arrow-up"></i> +12% this mo</div>
+              </div>
+            </div>
+            <div class="glass-card metric-card">
+              <div class="metric-icon-box metric-icon-purple"><i class="fas fa-user-ninja"></i></div>
+              <div>
+                <div class="metric-val">4,820</div>
+                <div class="metric-lbl">Monitored Creators</div>
+                <div class="metric-trend trend-up"><i class="fas fa-arrow-up"></i> +8.4%</div>
+              </div>
+            </div>
+            <div class="glass-card metric-card">
+              <div class="metric-icon-box metric-icon-pink"><i class="fas fa-user-slash"></i></div>
+              <div>
+                <div class="metric-val">34,120</div>
+                <div class="metric-lbl">Fake Accounts Flagged</div>
+                <div class="metric-trend trend-down"><i class="fas fa-arrow-up"></i> +18% surge</div>
+              </div>
+            </div>
+            <div class="glass-card metric-card">
+              <div class="metric-icon-box metric-icon-green"><i class="fas fa-folder-open"></i></div>
+              <div>
+                <div class="metric-val">42</div>
+                <div class="metric-lbl">Pending Investigations</div>
+                <div class="metric-trend trend-up"><i class="fas fa-check"></i> 85% cleared</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Charts Row 1 -->
+          <div class="charts-grid-2">
+            <div class="glass-card chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title"><i class="fas fa-chart-line text-neon"></i> Monthly Detection & Report Growth</div>
+                <span class="badge badge-neon">Live Feed</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-monthly-stats"></canvas>
+              </div>
+            </div>
+            <div class="glass-card chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title"><i class="fas fa-chart-pie text-neon"></i> Threat Share by Platform</div>
+                <span class="badge badge-purple">Multi-Channel</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-platform-dist"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Charts Row 2 -->
+          <div class="glass-card chart-card" style="margin-bottom:2rem;">
+            <div class="chart-card-header">
+              <div class="chart-card-title"><i class="fas fa-chart-bar text-neon"></i> Flagged Anomaly Types (Fake Likes, Followers, Spam Comments)</div>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-detection-bar"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             5. CREATOR MANAGEMENT VIEW
+             ========================================================================== -->
+        <section id="view-creators" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Creator <span class="gradient-text">Management</span> Hub</h2>
+              <p class="page-subtext">Monitor and manage creator profiles, engagement rates, and risk statuses.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Opening Add Creator Modal...')"><i class="fas fa-plus"></i> Add Creator</button>
+          </div>
+
+          <div class="glass-card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;gap:1rem;">
+              <input type="text" class="form-control" placeholder="Search creators by ID or Name..." style="max-width:320px;">
+              <div style="display:flex;gap:0.5rem;">
+                <select class="form-select" style="width:160px;">
+                  <option value="">All Platforms</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="YouTube">YouTube</option>
+                  <option value="TikTok">TikTok</option>
+                </select>
+                <select class="form-select" style="width:160px;">
+                  <option value="">All Statuses</option>
+                  <option value="Safe">Safe</option>
+                  <option value="Moderate Risk">Moderate Risk</option>
+                  <option value="High Risk">High Risk</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Creator ID</th>
+                    <th>Creator Name</th>
+                    <th>Platform</th>
+                    <th>Category</th>
+                    <th>Followers</th>
+                    <th>Engagement Rate</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="creator-table-body">
+                  <!-- Rendered dynamically by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             6. VIDEO MANAGEMENT VIEW
+             ========================================================================== -->
+        <section id="view-videos" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Video <span class="gradient-text">Analytics</span> Library</h2>
+              <p class="page-subtext">Track video views, likes, comments, and engagement manipulation.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Opening Add Video Form...')"><i class="fas fa-upload"></i> Add Video</button>
+          </div>
+
+          <div class="cards-grid-4" id="video-cards-grid">
+            <!-- Rendered dynamically by app.js -->
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             7. FAKE DETECTION MODULE VIEW
+             ========================================================================== -->
+        <section id="view-detection" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">AI Fake Engagement <span class="gradient-text">Scanner Engine</span></h2>
+              <p class="page-subtext">Run deep neural scans on social media handles to expose artificial engagement.</p>
+            </div>
+          </div>
+
+          <div class="glass-card" style="padding:2rem;margin-bottom:2rem;">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;align-items:end;">
+              <div>
+                <label class="form-label">Social Media Creator Handle or Profile URL</label>
+                <input type="text" id="detection-handle-input" class="form-control" value="@aria_sterling" placeholder="e.g. @username or profile link">
+              </div>
+              <div>
+                <label class="form-label">Target Platform</label>
+                <select id="detection-platform-select" class="form-select">
+                  <option value="Instagram">Instagram</option>
+                  <option value="TikTok">TikTok</option>
+                  <option value="YouTube">YouTube</option>
+                  <option value="Twitter">Twitter / X</option>
+                </select>
+              </div>
+              <div>
+                <button id="run-detection-btn" class="btn btn-primary" style="width:100%;">
+                  <i class="fas fa-radar"></i> Run Detection Engine
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detection Results Panel -->
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;margin-bottom:2rem;">
+            <!-- Left: Circular Gauge Card -->
+            <div class="glass-card" style="padding:2rem;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+              <h4 style="margin-bottom:1.5rem;">Suspicious Activity Score</h4>
+              <div class="circle-progress-wrapper">
+                <svg class="circle-progress-svg">
+                  <defs>
+                    <linearGradient id="cyan-purple-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00f0ff" />
+                      <stop offset="100%" stop-color="#ff007f" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="circle-progress-bg" cx="70" cy="70" r="60" />
+                  <circle id="det-score-circle" class="circle-progress-bar" cx="70" cy="70" r="60" />
+                </svg>
+                <div id="det-score-val" class="circle-progress-value text-neon">88.5%</div>
+              </div>
+              <div style="margin-top:1.5rem;">
+                <span id="det-status-badge" class="badge badge-danger" style="font-size:0.9rem;padding:0.4rem 1rem;">High Risk</span>
+              </div>
+            </div>
+
+            <!-- Right: Breakdown Metrics & AI Confidence -->
+            <div class="glass-card" style="padding:2rem;">
+              <h4 style="margin-bottom:1.5rem;"><i class="fas fa-shield-cat text-neon"></i> AI Anomaly Decomposition</h4>
+              <div class="cards-grid-4" style="margin-bottom:1.5rem;">
+                <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:12px;border:1px solid var(--border-color);">
+                  <small class="text-muted">Fake Followers</small>
+                  <h3 id="det-fake-followers" class="text-neon" style="font-size:1.5rem;margin-top:0.2rem;">384,120</h3>
+                </div>
+                <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:12px;border:1px solid var(--border-color);">
+                  <small class="text-muted">Fake Likes</small>
+                  <h3 id="det-fake-likes" class="text-pink" style="font-size:1.5rem;margin-top:0.2rem;">161,330</h3>
+                </div>
+                <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:12px;border:1px solid var(--border-color);">
+                  <small class="text-muted">Spam Comments</small>
+                  <h3 id="det-fake-comments" style="font-size:1.5rem;margin-top:0.2rem;color:var(--neon-purple);">29,040</h3>
+                </div>
+                <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:12px;border:1px solid var(--border-color);">
+                  <small class="text-muted">AI Confidence</small>
+                  <h3 id="det-ai-confidence" style="font-size:1.5rem;margin-top:0.2rem;color:var(--status-safe);">99.2%</h3>
+                </div>
+              </div>
+
+              <!-- Heatmap Preview -->
+              <div>
+                <h5 style="margin-bottom:0.5rem;font-size:0.95rem;" class="text-muted">7-Day Engagement Anomaly Intensity Heatmap</h5>
+                <div id="det-heatmap-container" class="heatmap-grid"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             8. REPORTS MODULE VIEW
+             ========================================================================== -->
+        <section id="view-reports" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Audit <span class="gradient-text">Reports</span> Module</h2>
+              <p class="page-subtext">Generate, filter, and export forensic risk evaluation reports as PDF.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Creating New Forensic Report...')"><i class="fas fa-file-export"></i> Create New Report</button>
+          </div>
+
+          <div class="glass-card" style="padding:1.5rem;">
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Creator Name</th>
+                    <th>Reason for Audit</th>
+                    <th>Threat Score</th>
+                    <th>Generated Date</th>
+                    <th>Export</th>
+                  </tr>
+                </thead>
+                <tbody id="reports-table-body">
+                  <!-- Rendered dynamically by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             9. ANALYTICS PAGE VIEW
+             ========================================================================== -->
+        <section id="view-analytics" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Deep <span class="gradient-text">Analytics</span> Intelligence</h2>
+              <p class="page-subtext">Engagement trends, platform threat matrix, and high-risk leaderboards.</p>
+            </div>
+          </div>
+
+          <div class="charts-grid-2">
+            <div class="glass-card chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title"><i class="fas fa-chart-area text-pink"></i> High-Risk Threat Surge (Weekly Area Trend)</div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-analytics-area"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title"><i class="fas fa-chart-pie text-neon"></i> Overall Risk Category Distribution</div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-analytics-pie"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             10. NOTIFICATIONS PAGE VIEW
+             ========================================================================== -->
+        <section id="view-notifications" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">System <span class="gradient-text">Notifications</span> & Alerts</h2>
+              <p class="page-subtext">Real-time alerts on fake accounts, threat thresholds, and report logs.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="showToast('All notifications marked as read!')"><i class="fas fa-check-double"></i> Mark All as Read</button>
+          </div>
+
+          <div class="glass-card" style="padding:1.5rem;max-width:800px;">
+            <div class="notif-item unread">
+              <div class="notif-title"><i class="fas fa-exclamation-triangle text-danger"></i> High-Risk Bot Farm Identified</div>
+              <div class="notif-desc">Creator <strong>@aria_sterling</strong> breached 88% fake followers threshold across 14,000 synthetic profiles.</div>
+              <div class="notif-time">10 minutes ago</div>
+            </div>
+            <div class="notif-item unread">
+              <div class="notif-title"><i class="fas fa-file-circle-check text-neon"></i> New Forensic Audit Report Generated</div>
+              <div class="notif-desc">Report REP-8801 for Elena FitLife has been compiled and is ready for PDF download.</div>
+              <div class="notif-time">1 hour ago</div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-title"><i class="fas fa-user-pen text-purple"></i> Creator Profile Updated</div>
+              <div class="notif-desc">Marcus Vlogs status updated to Safe following manual audit verification.</div>
+              <div class="notif-time">1 day ago</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             11. USER PROFILE PAGE VIEW
+             ========================================================================== -->
+        <section id="view-profile" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">User <span class="gradient-text">Profile</span> Settings</h2>
+              <p class="page-subtext">Manage account security, contact details, and role access.</p>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:2rem;">
+            <div class="glass-card" style="padding:2rem;text-align:center;">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" alt="Avatar" style="width:120px;height:120px;border-radius:50%;border:3px solid var(--neon-blue);margin-bottom:1rem;object-fit:cover;">
+              <h3>Alex Vance</h3>
+              <div class="badge badge-purple" style="margin:0.5rem 0 1rem;">Lead Security Analyst</div>
+              <p class="text-muted" style="font-size:0.875rem;">ID: USR-90214 | Role: Admin Access</p>
+            </div>
+
+            <div class="glass-card" style="padding:2rem;">
+              <form onsubmit="event.preventDefault(); window.showToast('Profile updated successfully!');">
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-control" value="Alex Vance">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email Address</label>
+                  <input type="email" class="form-control" value="alex.vance@fdms.cyber">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Phone Number</label>
+                  <input type="tel" class="form-control" value="+1 (555) 019-2831">
+                </div>
+                <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                  <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                  <button type="button" class="btn btn-secondary" onclick="showToast('Password reset modal triggered...')"><i class="fas fa-key"></i> Change Password</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             12. ADMIN PANEL VIEW
+             ========================================================================== -->
+        <section id="view-admin" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Administrative <span class="gradient-text">Governance</span> Panel</h2>
+              <p class="page-subtext">Manage system telemetry, logs, user privileges, and database controls.</p>
+            </div>
+          </div>
+
+          <div class="cards-grid-4">
+            <div class="glass-card metric-card">
+              <div class="metric-icon-box"><i class="fas fa-database"></i></div>
+              <div>
+                <div class="metric-val">1.42M</div>
+                <div class="metric-lbl">Total Database Records</div>
+              </div>
+            </div>
+            <div class="glass-card metric-card">
+              <div class="metric-icon-box metric-icon-purple"><i class="fas fa-user-check"></i></div>
+              <div>
+                <div class="metric-val">842</div>
+                <div class="metric-lbl">Active System Users</div>
+              </div>
+            </div>
+            <div class="glass-card metric-card">
+              <div class="metric-icon-box metric-icon-green"><i class="fas fa-bullseye"></i></div>
+              <div>
+                <div class="metric-val">99.4%</div>
+                <div class="metric-lbl">Detection Accuracy</div>
+              </div>
+            </div>
+            <div class="glass-card metric-card">
+              <div class="metric-icon-box metric-icon-pink"><i class="fas fa-file-shield"></i></div>
+              <div>
+                <div class="metric-val">12,480</div>
+                <div class="metric-lbl">Reports Generated</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- System Logs View -->
+          <div class="glass-card" style="padding:1.5rem;margin-top:1.5rem;">
+            <h4 style="margin-bottom:1rem;"><i class="fas fa-terminal text-neon"></i> System Security Logs</h4>
+            <div style="background:#04050c;padding:1rem;border-radius:8px;font-family:monospace;font-size:0.85rem;color:#00ff9d;max-height:220px;overflow-y:auto;line-height:1.6;">
+              [2026-08-01 20:00:12] INFO: Neural network model v4.2 loaded into GPU memory.<br>
+              [2026-08-01 20:00:45] SYSTEM: Database connection pool healthy (12/12 connections active).<br>
+              [2026-08-01 20:01:02] ALERT: High risk threshold triggered for @aria_sterling (88.5%).<br>
+              [2026-08-01 20:01:25] AUDIT: Report REP-8801 compiled and hashed with SHA-256.<br>
+              [2026-08-01 20:01:50] AUTH: User alex.vance@fdms.cyber granted admin session token.
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================================================
+             13. DATABASE VISUALIZATION SECTION
+             ========================================================================== -->
+        <section id="view-database" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Database Architecture & <span class="gradient-text">Schema Visualization</span></h2>
+              <p class="page-subtext">Interactive ER Diagram, Primary/Foreign key maps, and 3NF Normalization metrics across 12 relational tables.</p>
+            </div>
+          </div>
+
+          <!-- ER Diagram SVG Container -->
+          <div class="er-container glass-card" style="margin-bottom:2rem;">
+            <h3 style="margin-bottom:1rem;"><i class="fas fa-diagram-project text-neon"></i> Interactive ER Diagram (Entity Relationship Model)</h3>
+            <svg class="er-diagram-svg" viewBox="0 0 900 500">
+              <defs>
+                <linearGradient id="svgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00f0ff" />
+                  <stop offset="100%" stop-color="#9d4edd" />
+                </linearGradient>
+              </defs>
+
+              <!-- Connection Lines -->
+              <path d="M 180 100 L 400 100" stroke="#00f0ff" stroke-width="2" stroke-dasharray="5,5" />
+              <path d="M 520 100 L 700 100" stroke="#9d4edd" stroke-width="2" />
+              <path d="M 460 140 L 460 250" stroke="#00f0ff" stroke-width="2" />
+              <path d="M 460 300 L 460 400" stroke="#ff007f" stroke-width="2" />
+              <path d="M 180 270 L 400 270" stroke="#00ff9d" stroke-width="2" />
+
+              <!-- Entity Cards (SVG Blocks) -->
+              <!-- Users Table -->
+              <g transform="translate(40, 60)">
+                <rect width="140" height="80" rx="8" fill="rgba(18,22,48,0.9)" stroke="#00f0ff" stroke-width="2" />
+                <text x="70" y="30" fill="#00f0ff" font-weight="bold" text-anchor="middle">Users</text>
+                <text x="70" y="52" fill="#94a3b8" font-size="11" text-anchor="middle">PK: user_id</text>
+                <text x="70" y="68" fill="#64748b" font-size="10" text-anchor="middle">email, role, hash</text>
+              </g>
+
+              <!-- Creators Table -->
+              <g transform="translate(380, 60)">
+                <rect width="150" height="80" rx="8" fill="rgba(18,22,48,0.9)" stroke="#9d4edd" stroke-width="2" />
+                <text x="75" y="30" fill="#9d4edd" font-weight="bold" text-anchor="middle">Creators</text>
+                <text x="75" y="52" fill="#94a3b8" font-size="11" text-anchor="middle">PK: creator_id</text>
+                <text x="75" y="68" fill="#64748b" font-size="10" text-anchor="middle">followers, status</text>
+              </g>
+
+              <!-- Videos Table -->
+              <g transform="translate(680, 60)">
+                <rect width="140" height="80" rx="8" fill="rgba(18,22,48,0.9)" stroke="#ff007f" stroke-width="2" />
+                <text x="70" y="30" fill="#ff007f" font-weight="bold" text-anchor="middle">Videos</text>
+                <text x="70" y="52" fill="#94a3b8" font-size="11" text-anchor="middle">PK: video_id</text>
+                <text x="70" y="68" fill="#64748b" font-size="10" text-anchor="middle">FK: creator_id</text>
+              </g>
+
+              <!-- Reports Table -->
+              <g transform="translate(40, 230)">
+                <rect width="140" height="80" rx="8" fill="rgba(18,22,48,0.9)" stroke="#00ff9d" stroke-width="2" />
+                <text x="70" y="30" fill="#00ff9d" font-weight="bold" text-anchor="middle">Reports</text>
+                <text x="70" y="52" fill="#94a3b8" font-size="11" text-anchor="middle">PK: report_id</text>
+                <text x="70" y="68" fill="#64748b" font-size="10" text-anchor="middle">FK: creator_id</text>
+              </g>
+
+              <!-- Detection Table -->
+              <g transform="translate(380, 230)">
+                <rect width="150" height="80" rx="8" fill="rgba(18,22,48,0.9)" stroke="#00f0ff" stroke-width="2" />
+                <text x="75" y="30" fill="#00f0ff" font-weight="bold" text-anchor="middle">Detection</text>
+                <text x="75" y="52" fill="#94a3b8" font-size="11" text-anchor="middle">PK: detection_id</text>
+                <text x="75" y="68" fill="#64748b" font-size="10" text-anchor="middle">FK: creator_id</text>
+              </g>
+
+              <!-- Analytics Table -->
+              <g transform="translate(380, 380)">
+                <rect width="150" height="80" rx="8" fill="rgba(18,22,48,0.9)" stroke="#ffb703" stroke-width="2" />
+                <text x="75" y="30" fill="#ffb703" font-weight="bold" text-anchor="middle">Analytics</text>
+                <text x="75" y="52" fill="#94a3b8" font-size="11" text-anchor="middle">PK: metric_id</text>
+                <text x="75" y="68" fill="#64748b" font-size="10" text-anchor="middle">platform, monthly_avg</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Normalization & Relational Guide -->
+          <div class="glass-card" style="padding:1.75rem;margin-bottom:2rem;">
+            <h3><i class="fas fa-layer-group text-neon"></i> Database Normalization Process</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem;">
+              <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:8px;border:1px solid var(--border-color);">
+                <span class="badge badge-neon">1NF (First Normal Form)</span>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">Atomic columns without repeating groups. Each record contains unique scalar values.</p>
+              </div>
+              <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:8px;border:1px solid var(--border-color);">
+                <span class="badge badge-purple">2NF (Second Normal Form)</span>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">Elimination of partial dependencies. Non-key attributes fully depend on candidate keys.</p>
+              </div>
+              <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:8px;border:1px solid var(--border-color);">
+                <span class="badge badge-safe">3NF (Third Normal Form)</span>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">Elimination of transitive dependencies. Non-key columns depend only on primary keys.</p>
+              </div>
+              <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:8px;border:1px solid var(--border-color);">
+                <span class="badge badge-danger">BCNF (Boyce-Codd)</span>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">Strict determinant rule enforced across multi-attribute candidate keys for audit stability.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 12 Tables Schema Grid Container -->
+          <div id="db-schema-container">
+            <!-- Rendered dynamically by database.js -->
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Notification Drawer -->
+  <aside id="notification-drawer" class="notification-drawer">
+    <div class="drawer-header">
+      <h4><i class="fas fa-bell text-neon"></i> System Notifications</h4>
+      <button id="close-notif-drawer" class="btn btn-sm btn-secondary btn-icon"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-body">
+      <div class="notif-item unread">
+        <div class="notif-title"><i class="fas fa-robot text-danger"></i> High Bot Activity Alert</div>
+        <div class="notif-desc">Creator <strong>@aria_sterling</strong> follower ratio flagged as suspicious.</div>
+        <div class="notif-time">10 minutes ago</div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-title"><i class="fas fa-file-invoice text-neon"></i> Report Generated</div>
+        <div class="notif-desc">Audit report REP-8801 is ready for export.</div>
+        <div class="notif-time">1 hour ago</div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- Scripts -->
+<script src="js/particles.js"></script>
+<script src="js/cursor.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/detection.js"></script>
+<script src="js/database.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
