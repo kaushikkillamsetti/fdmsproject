@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Global Mock Data State
   window.FDMSState = {
     currentUser: {
-      name: 'Alex Vance',
-      email: 'alex.vance@fdms.cyber',
+      name: 'kaushik ',
+      email: 'kaushikkillamsetty@fdms.cyber',
       role: 'Lead Security Analyst',
       phone: '+1 (555) 019-2831',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
