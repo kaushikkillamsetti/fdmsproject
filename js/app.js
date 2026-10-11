@@ -34,30 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { id: 2, title: 'Bot Farm Cluster Discovered', desc: '14,000 automated Instagram profiles identified', time: '1 hour ago', unread: true },
       { id: 3, title: 'Weekly Report Ready', desc: 'Executive threat summary for July 2026 compiled', time: '5 hours ago', unread: false }
     ]
-     const saved = JSON.parse(localStorage.getItem('fdmsUser') || 'null');
-if (saved) Object.assign(FDMSState.currentUser, saved);
-
-function renderUser() {
-  const u = FDMSState.currentUser;
-  ['topbar-name', 'card-name'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = u.name;
-  });
-  const n = document.getElementById('input-name');
-  const e = document.getElementById('input-email');
-  if (n) n.value = u.name;
-  if (e) e.value = u.email;
-}
-renderUser();
-
-document.getElementById('profile-form')?.addEventListener('submit', ev => {
-  ev.preventDefault();
-  FDMSState.currentUser.name = document.getElementById('input-name').value.trim();
-  FDMSState.currentUser.email = document.getElementById('input-email').value.trim();
-  localStorage.setItem('fdmsUser', JSON.stringify(FDMSState.currentUser));
-  renderUser();
-  window.showToast('Profile updated successfully!');
-});
+     
 
   };
 
