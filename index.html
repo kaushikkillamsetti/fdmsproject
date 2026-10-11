@@ -17,6 +17,10 @@
 
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- jsPDF & AutoTable CDN (For real forensic audit report PDF exports) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -38,8 +42,11 @@
         <li><a href="#team">Team</a></li>
         <li><a href="#" data-view="view-database">Database Architecture</a></li>
       </ul>
-      <div class="landing-actions">
-        <button class="btn btn-secondary btn-sm" data-view="view-login"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <div class="landing-actions" style="display:flex;align-items:center;gap:0.6rem;">
+        <div class="db-status-pill" id="landing-db-status" title="Live PostgreSQL Database Status">
+          <span class="db-status-dot"></span> PostgreSQL: <strong id="landing-db-status-text">Connected (fdms_db)</strong>
+        </div>
+        <button class="btn btn-secondary btn-sm" data-view="view-login" data-portal="analyst"><i class="fas fa-shield-halved"></i> Login</button>
         <button class="btn btn-primary btn-sm" data-view="view-register"><i class="fas fa-user-plus"></i> Register</button>
       </div>
     </nav>
@@ -47,7 +54,7 @@
     <!-- Hero Section -->
     <div class="hero-section">
       <div class="hero-tag">
-        <i class="fas fa-bolt"></i> Next-Gen Social Engagement Integrity Platform
+        <i class="fas fa-bolt"></i> Next-Gen Social Engagement Integrity Platform &bull; PostgreSQL Powered
       </div>
       <h1 class="hero-title">
         Detect & Neutralize <br>
@@ -56,12 +63,18 @@
       <p class="hero-desc">
         Empower brands, platforms, and analysts with real-time AI bot identification, click-farm cluster detection, fake follower forensic auditing, and automated risk scoring across top social platforms.
       </p>
-      <div class="hero-cta">
+      <div class="hero-cta" style="gap:0.75rem;flex-wrap:wrap;">
         <button class="btn btn-primary btn-lg" data-view="view-detection">
           <i class="fas fa-radar"></i> Detect Fake Engagement Now
         </button>
-        <button class="btn btn-secondary btn-lg" data-view="view-dashboard">
-          <i class="fas fa-chart-line"></i> Launch Dashboard
+        <button class="btn btn-secondary btn-lg" data-view="view-login" data-portal="analyst">
+          <i class="fas fa-shield-virus"></i> Analyst Portal
+        </button>
+        <button class="btn btn-secondary btn-lg" data-view="view-login" data-portal="admin">
+          <i class="fas fa-user-shield"></i> Admin Access
+        </button>
+        <button class="btn btn-outline-neon btn-lg" data-view="view-login" data-portal="user">
+          <i class="fas fa-users-gear"></i> Creator Portal
         </button>
       </div>
 
@@ -207,88 +220,207 @@
   </section>
 
   <!-- ==========================================================================
-       2. LOGIN VIEW
+       2. LOGIN VIEW (STANDARD CYBERSECURITY & CLIENT PORTALS)
        ========================================================================== -->
   <section id="view-login" class="app-view">
     <div class="auth-wrapper">
-      <div class="glass-card-static auth-card">
-        <div class="auth-header">
-          <div class="brand-icon" style="margin:0 auto 1rem;"><i class="fas fa-shield-virus"></i></div>
-          <h2>Welcome Back</h2>
-          <p>Sign in to your FDMS Intelligence Portal</p>
+      <div class="glass-card-static auth-card" style="max-width:520px;">
+        <!-- 2-Role Portal Switcher Tabs (Special Admin Portal separated) -->
+        <div class="auth-portal-selector">
+          <button type="button" class="portal-tab-btn active" data-portal-tab="Analyst" id="tab-portal-analyst">
+            <i class="fas fa-shield-virus"></i> Analyst Portal
+          </button>
+          <button type="button" class="portal-tab-btn" data-portal-tab="User" id="tab-portal-user">
+            <i class="fas fa-users-gear"></i> Creator / Brand Portal
+          </button>
         </div>
-        <form onsubmit="event.preventDefault(); window.showToast('Login successful! Directing to Dashboard...'); setTimeout(() => document.querySelector('[data-view=\'view-dashboard\']').click(), 800);">
-          <div class="form-group">
-            <label class="form-label">Email Address</label>
-            <input type="email" class="form-control" value="alex.vance@fdms.cyber" required>
+
+        <div class="auth-header" style="margin-bottom:1.5rem;">
+          <div id="auth-portal-badge" class="portal-badge-indicator badge-portal-analyst">
+            <i class="fas fa-shield-virus"></i> Security Analyst Clearance
+          </div>
+          <h2 id="auth-portal-title">Analyst Threat Portal</h2>
+          <p id="auth-portal-desc">Forensic bot telemetry, click-farm clustering & deep anomaly audits</p>
+        </div>
+
+        <!-- 1-Click Demo Credentials Autofill Banner -->
+        <div class="demo-quick-box" id="demo-quick-box">
+          <div class="demo-quick-info">
+            <strong><i class="fas fa-id-badge text-neon"></i> Instant Demo Credentials</strong>
+            <span id="demo-account-hint">analyst@fdms.cyber &bull; Analyst@1234</span>
+          </div>
+          <button type="button" class="demo-quick-btn" id="btn-autofill-demo">
+            <i class="fas fa-key"></i> Quick Fill
+          </button>
+        </div>
+
+        <!-- Real Form Submitting to /api/auth/login -->
+        <form id="form-login">
+          <div id="login-error-alert" style="display:none;background:rgba(239,68,68,0.15);border:1px solid #ef4444;color:#fca5a5;padding:0.75rem 1rem;border-radius:8px;font-size:0.875rem;margin-bottom:1rem;">
           </div>
           <div class="form-group">
-            <label class="form-label">Password</label>
-            <input type="password" class="form-control" value="••••••••••••" required>
+            <label class="form-label" id="label-login-email"><i class="fas fa-envelope text-neon"></i> Analyst Email Address</label>
+            <input type="email" id="login-email" class="form-control" placeholder="analyst@fdms.cyber" value="analyst@fdms.cyber" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-lock text-neon"></i> Password</label>
+            <div class="password-input-group">
+              <input type="password" id="login-password" class="form-control" placeholder="••••••••••••" value="Analyst@1234" required>
+              <button type="button" class="password-toggle-btn" id="toggle-login-pass" title="Show/Hide Password">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
           </div>
           <div class="auth-flex-row">
             <label class="checkbox-label">
-              <input type="checkbox" checked> Remember me
+              <input type="checkbox" id="login-remember" checked> Remember session
             </label>
-            <a href="#" onclick="showToast('Password reset link sent to email');" class="text-neon" style="font-size:0.875rem;">Forgot Password?</a>
+            <a href="#" onclick="showToast('Password reset link simulated. Contact system administrator for key resets.');" class="text-neon" style="font-size:0.875rem;">Forgot Password?</a>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%;">
-            <i class="fas fa-sign-in-alt"></i> Login to System
+          <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width:100%;">
+            <i class="fas fa-sign-in-alt"></i> <span id="login-submit-text">Authenticate via PostgreSQL</span>
           </button>
         </form>
+
         <div class="auth-footer-text">
-          Don't have an account? <a href="#" data-view="view-register" class="gradient-text">Register here</a>
+          Don't have an account? <a href="#" data-view="view-register" class="gradient-text">Register a new profile</a>
+          <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px dashed rgba(255,255,255,0.12);font-size:0.82rem;">
+            <i class="fas fa-user-shield text-warning"></i> Looking for System Administrator Access? <br>
+            <a href="#" data-view="view-admin-login" class="text-warning" style="font-weight:700;"><i class="fas fa-key"></i> Open Master Admin Governance Gate &rarr;</a>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ==========================================================================
-       3. REGISTRATION VIEW
+       2B. SPECIAL ADMIN GOVERNANCE LOGIN GATE (RESTRICTED TO SYSTEM ADMINISTRATORS)
+       ========================================================================== -->
+  <section id="view-admin-login" class="app-view">
+    <div class="auth-wrapper">
+      <div class="glass-card-static auth-card" style="max-width:520px;border:1px solid rgba(255, 170, 0, 0.4);box-shadow: 0 0 30px rgba(255, 170, 0, 0.15);">
+        <div class="auth-header" style="margin-bottom:1.5rem;">
+          <div class="portal-badge-indicator badge-portal-admin" style="margin:0 auto 0.75rem;">
+            <i class="fas fa-lock"></i> Restricted Level-5 Governance Access
+          </div>
+          <h2 style="color:#ffaa00;"><i class="fas fa-shield-halved"></i> Master Admin Gate</h2>
+          <p>Restricted to Authorized Platform Administrators & Governance Officers</p>
+        </div>
+
+        <div class="demo-quick-box" style="border-color:rgba(255, 170, 0, 0.3);">
+          <div class="demo-quick-info">
+            <strong style="color:#ffaa00;"><i class="fas fa-key"></i> Master Admin Credentials</strong>
+            <span>admin@fdms.cyber &bull; Admin@1234 &bull; Key: ADM-MASTER-2026</span>
+          </div>
+          <button type="button" class="demo-quick-btn" id="btn-autofill-admin-demo" style="color:#ffaa00;border-color:rgba(255, 170, 0, 0.4);">
+            <i class="fas fa-bolt"></i> Fill Admin
+          </button>
+        </div>
+
+        <form id="form-admin-login">
+          <div id="admin-login-error-alert" style="display:none;background:rgba(239,68,68,0.15);border:1px solid #ef4444;color:#fca5a5;padding:0.75rem 1rem;border-radius:8px;font-size:0.875rem;margin-bottom:1rem;">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-user-shield" style="color:#ffaa00;"></i> Master Administrator Email</label>
+            <input type="email" id="admin-email" class="form-control" placeholder="admin@fdms.cyber" value="admin@fdms.cyber" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-lock" style="color:#ffaa00;"></i> Master Administrator Password</label>
+            <div class="password-input-group">
+              <input type="password" id="admin-password" class="form-control" placeholder="••••••••••••" value="Admin@1234" required>
+              <button type="button" class="password-toggle-btn" id="toggle-admin-pass" title="Show/Hide Password">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-shield-cat" style="color:#ffaa00;"></i> Master Security Clearance Key</label>
+            <input type="text" id="admin-master-key" class="form-control" placeholder="ADM-MASTER-2026" value="ADM-MASTER-2026" required>
+            <small class="text-muted" style="font-size:0.75rem;">Requires Level-5 Root Security Clearance Token</small>
+          </div>
+          <button type="submit" id="btn-admin-login-submit" class="btn btn-primary" style="width:100%;background:linear-gradient(135deg, #ffaa00, #ff3366);border:none;margin-top:1rem;">
+            <i class="fas fa-unlock-keyhole"></i> <span id="admin-login-submit-text">Unlock Administrator Governance Console</span>
+          </button>
+        </form>
+
+        <div class="auth-footer-text">
+          <a href="#" data-view="view-login" class="text-muted"><i class="fas fa-arrow-left"></i> Return to Standard Analyst & Creator Login</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       3. REGISTRATION VIEW (STORED IN POSTGRESQL DATABASE)
        ========================================================================== -->
   <section id="view-register" class="app-view">
     <div class="auth-wrapper">
-      <div class="glass-card-static auth-card">
-        <div class="auth-header">
+      <div class="glass-card-static auth-card" style="max-width:540px;">
+        <div class="auth-header" style="margin-bottom:1.5rem;">
           <div class="brand-icon" style="margin:0 auto 1rem;"><i class="fas fa-user-plus"></i></div>
           <h2>Create Account</h2>
-          <p>Join the Fake Detection Network</p>
+          <p>Join the Fake Detection Network &bull; Stored in PostgreSQL (<span class="text-neon">fdms_db</span>)</p>
         </div>
-        <form onsubmit="event.preventDefault(); window.showToast('Registration successful! Please login.'); setTimeout(() => document.querySelector('[data-view=\'view-login\']').click(), 800);">
-          <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <input type="text" class="form-control" placeholder="John Doe" required>
+
+        <form id="form-register">
+          <div id="reg-error-alert" style="display:none;background:rgba(239,68,68,0.15);border:1px solid #ef4444;color:#fca5a5;padding:0.75rem 1rem;border-radius:8px;font-size:0.875rem;margin-bottom:1rem;">
           </div>
           <div class="form-group">
-            <label class="form-label">Email Address</label>
-            <input type="email" class="form-control" placeholder="name@company.com" required>
+            <label class="form-label"><i class="fas fa-user text-neon"></i> Full Legal Name</label>
+            <input type="text" id="reg-full-name" class="form-control" placeholder="Alex Vance" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" placeholder="+1 (555) 000-0000" required>
+            <label class="form-label"><i class="fas fa-envelope text-neon"></i> Official Email Address</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="name@company.com" required>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-phone text-neon"></i> Contact Phone</label>
+              <input type="tel" id="reg-phone" class="form-control" placeholder="+1 (555) 000-0000">
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-building text-neon"></i> Organization / Agency</label>
+              <input type="text" id="reg-org" class="form-control" placeholder="Cyber Defense Unit">
+            </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Account Role Type</label>
-            <select class="form-select">
-              <option value="Analyst">Security Analyst</option>
-              <option value="Admin">System Administrator</option>
-              <option value="User">Standard Platform User</option>
+            <label class="form-label"><i class="fas fa-user-tag text-neon"></i> Account Role Type</label>
+            <select id="reg-role" class="form-select">
+              <option value="Analyst">🛡️ Security Analyst (Threat Detection & Forensics)</option>
+              <option value="Admin">⚡ System Administrator (Platform & Governance)</option>
+              <option value="User">🌐 Brand / Creator User (Engagement & Health Audit)</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Password</label>
-            <input type="password" class="form-control" placeholder="••••••••••••" required>
+            <label class="form-label"><i class="fas fa-lock text-neon"></i> Password</label>
+            <div class="password-input-group">
+              <input type="password" id="reg-password" class="form-control" placeholder="Create secure password" required>
+              <button type="button" class="password-toggle-btn" id="toggle-reg-pass" title="Show/Hide Password">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="strength-bar-wrap">
+              <div class="strength-bar-fill" id="reg-strength-bar"></div>
+            </div>
+            <span class="strength-text" id="reg-strength-text">Password strength: Empty</span>
           </div>
           <div class="form-group">
-            <label class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" placeholder="••••••••••••" required>
+            <label class="form-label"><i class="fas fa-shield-alt text-neon"></i> Confirm Password</label>
+            <input type="password" id="reg-confirm-password" class="form-control" placeholder="Re-enter password" required>
+            <small id="reg-match-indicator" style="display:none;font-size:0.75rem;margin-top:0.25rem;"></small>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%;">
-            <i class="fas fa-user-check"></i> Register Account
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="reg-terms" required> I agree to FDMS Platform Terms & Cybersecurity Protocols
+            </label>
+          </div>
+          <button type="submit" id="btn-register-submit" class="btn btn-primary" style="width:100%;">
+            <i class="fas fa-user-check"></i> <span id="reg-submit-text">Save Account to PostgreSQL</span>
           </button>
         </form>
+
         <div class="auth-footer-text">
-          Already registered? <a href="#" data-view="view-login" class="gradient-text">Sign In</a>
+          Already registered? <a href="#" data-view="view-login" class="gradient-text">Sign In to Portal</a>
         </div>
       </div>
     </div>
@@ -321,6 +453,11 @@
         <li>
           <a class="sidebar-link" data-view="view-creators">
             <i class="fas fa-users-gear"></i> <span>Creator Hub</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-view="view-comparison">
+            <i class="fas fa-scale-balanced"></i> <span>Creator Comparison</span>
           </a>
         </li>
         <li>
@@ -381,30 +518,41 @@
             <input type="text" id="global-search-input" class="form-control" placeholder="Search creators, videos, handles...">
           </div>
         </div>
-        <div class="topbar-right">
+        <div class="topbar-right" style="display:flex;align-items:center;gap:0.75rem;">
+          <!-- PostgreSQL Status Indicator -->
+          <div class="db-status-pill" id="topbar-db-status" title="Live PostgreSQL Status">
+            <span class="db-status-dot"></span> PostgreSQL: <strong id="topbar-db-status-text">Connected (fdms_db)</strong>
+          </div>
+
           <button id="theme-toggle-btn" class="topbar-btn" title="Toggle Light/Dark Theme">
             <i class="fas fa-sun"></i>
           </button>
           <button id="topbar-notif-btn" class="topbar-btn" title="Notifications">
             <i class="fas fa-bell"></i>
-            <span class="notification-badge"></span>
+            <span class="notification-badge" id="topbar-notif-badge"></span>
           </button>
 
           <!-- User Profile Dropdown Menu -->
           <div class="profile-menu">
             <div id="profile-dropdown-trigger" class="profile-trigger">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar" class="profile-img">
+              <img id="topbar-user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar" class="profile-img">
               <div class="profile-info">
-                <span class="profile-name">Alex Vance</span> 
-                <span class="profile-role">Lead Analyst</span>
+                <span class="profile-name" id="topbar-user-name">Alex Vance</span> 
+                <span class="profile-role" id="topbar-user-role">Security Analyst</span>
               </div>
               <i class="fas fa-chevron-down text-muted" style="font-size:0.75rem;"></i>
             </div>
             <div id="profile-dropdown-menu" class="dropdown-menu">
+              <div style="padding:0.5rem 1rem;border-bottom:1px solid var(--border-color);margin-bottom:0.25rem;">
+                <small class="text-muted" style="display:block;font-size:0.75rem;">SIGNED IN AS</small>
+                <strong id="dropdown-user-email" style="font-size:0.85rem;color:var(--text-primary);word-break:break-all;">analyst@fdms.cyber</strong>
+                <div id="dropdown-user-badge" style="font-size:0.72rem;color:var(--neon-blue);font-family:monospace;margin-top:0.2rem;">SEC-9042</div>
+              </div>
               <a class="dropdown-item" data-view="view-profile"><i class="fas fa-user-circle"></i> My Profile</a>
-              <a class="dropdown-item" data-view="view-admin"><i class="fas fa-cog"></i> Settings</a>
+              <a class="dropdown-item" data-view="view-admin"><i class="fas fa-cog"></i> Settings & Users</a>
+              <a class="dropdown-item" data-view="view-database"><i class="fas fa-database"></i> PostgreSQL Architecture</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item text-danger" data-view="view-login"><i class="fas fa-sign-out-alt"></i> Logout</a>
+              <a class="dropdown-item text-danger" id="btn-logout" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
           </div>
         </div>
@@ -424,7 +572,7 @@
             </div>
             <div style="display:flex;gap:0.75rem;">
               <button class="btn btn-outline-neon btn-sm" data-view="view-detection"><i class="fas fa-radar"></i> Run Scanning Engine</button>
-              <button class="btn btn-primary btn-sm" onclick="showToast('Compiling new threat report...')"><i class="fas fa-plus"></i> Generate Report</button>
+              <button class="btn btn-primary btn-sm" id="btn-dashboard-generate-report"><i class="fas fa-plus"></i> Generate Report</button>
             </div>
           </div>
 
@@ -461,6 +609,68 @@
                 <div class="metric-lbl">Pending Investigations</div>
                 <div class="metric-trend trend-up"><i class="fas fa-check"></i> 85% cleared</div>
               </div>
+            </div>
+          </div>
+
+          <!-- ==========================================================================
+               LIVE BOT ATTACK SIMULATOR (Sandbox Telemetry Stress Test)
+               ========================================================================== -->
+          <div class="bot-simulator-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;gap:1rem;">
+              <div>
+                <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.25rem;">
+                  <span class="badge" style="background:rgba(255,0,127,0.2);color:#ff007f;border:1px solid #ff007f;font-weight:700;"><i class="fas fa-radiation"></i> ACTIVE SANDBOX</span>
+                  <h3 style="font-size:1.2rem;margin:0;"><i class="fas fa-robot text-pink"></i> Live Bot Attack Simulator & Sandbox Stress Test</h3>
+                </div>
+                <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Simulate sudden high-volume synthetic bot bursts to test neural detection algorithms, chart spikes, and automated incident alerts.</p>
+              </div>
+              <div style="display:flex;gap:0.5rem;">
+                <button class="btn btn-sm btn-outline-neon" id="btn-reset-simulator"><i class="fas fa-shield-halved"></i> Reset Baseline</button>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1rem;align-items:end;margin-bottom:1.25rem;">
+              <div>
+                <label class="form-label" style="font-size:0.8rem;"><i class="fas fa-crosshairs text-pink"></i> Victim Creator Target</label>
+                <select id="sim-target-creator" class="form-select">
+                  <option value="@aria_sterling">@aria_sterling (Instagram - 1.4M)</option>
+                  <option value="@elenafit">@elenafit (TikTok - 2.1M)</option>
+                  <option value="@cybergamer">@cybergamer (Twitch - 420K)</option>
+                  <option value="@novatech">@novatech (YouTube - 850K)</option>
+                  <option value="@marcusvlogs">@marcusvlogs (YouTube - 620K)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label" style="font-size:0.8rem;"><i class="fas fa-network-wired text-neon"></i> Attack Vector Pattern</label>
+                <select id="sim-attack-vector" class="form-select">
+                  <option value="Follower Flood Swarm (Click Farms)">Follower Flood (Click Farms)</option>
+                  <option value="Comment Spam Pods & Sentiment Abuse">Comment Spam Pods & Abuse</option>
+                  <option value="Instant Like Spoofing Burst">Instant Like Spoofing Burst</option>
+                  <option value="Distributed Sybil Bot Army">Distributed Sybil Bot Army</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label" style="font-size:0.8rem;"><i class="fas fa-users-rays text-purple"></i> Swarm Intensity Volume</label>
+                <div style="display:flex;gap:0.4rem;">
+                  <button type="button" class="swarm-preset-btn" data-bots="5000">5K</button>
+                  <button type="button" class="swarm-preset-btn active" data-bots="25000">25K</button>
+                  <button type="button" class="swarm-preset-btn" data-bots="100000">100K</button>
+                </div>
+              </div>
+
+              <div>
+                <button id="btn-launch-bot-attack" class="btn btn-danger" style="box-shadow:0 0 15px rgba(255,0,127,0.4);white-space:nowrap;">
+                  <i class="fas fa-bolt"></i> Launch Bot Surge
+                </button>
+              </div>
+            </div>
+
+            <!-- Terminal Stream & Telemetry Output -->
+            <div class="bot-terminal-feed" id="bot-simulator-terminal">
+              <div class="bot-terminal-line"><span class="text-muted">[SANDBOX READY]</span> <span>AI Sentinel Core online. Select target profile and click "Launch Bot Surge" to trigger simulation.</span></div>
+              <div class="bot-terminal-line"><span class="text-muted">[TELEMETRY]</span> <span>Baseline telemetry stable at 24% background noise. Ingestion pipeline standing by.</span></div>
             </div>
           </div>
 
@@ -506,25 +716,32 @@
               <h2 class="page-title">Creator <span class="gradient-text">Management</span> Hub</h2>
               <p class="page-subtext">Monitor and manage creator profiles, engagement rates, and risk statuses.</p>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="showToast('Opening Add Creator Modal...')"><i class="fas fa-plus"></i> Add Creator</button>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+              <button class="btn btn-outline-neon btn-sm" data-view="view-comparison"><i class="fas fa-scale-balanced"></i> Compare Creators</button>
+              <button class="btn btn-secondary btn-sm" id="btn-export-creators-csv" title="One-click CSV / Excel Export"><i class="fas fa-file-csv"></i> Export CSV</button>
+              <button class="btn btn-primary btn-sm" id="btn-open-add-creator"><i class="fas fa-plus"></i> Add Creator</button>
+            </div>
           </div>
 
           <div class="glass-card" style="padding:1.5rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;gap:1rem;">
-              <input type="text" class="form-control" placeholder="Search creators by ID or Name..." style="max-width:320px;">
-              <div style="display:flex;gap:0.5rem;">
-                <select class="form-select" style="width:160px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap;">
+              <input type="text" id="creator-search-input" class="form-control" placeholder="Search creators by ID, Name or Handle..." style="max-width:320px;">
+              <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                <select id="creator-filter-platform" class="form-select" style="width:160px;">
                   <option value="">All Platforms</option>
                   <option value="Instagram">Instagram</option>
                   <option value="YouTube">YouTube</option>
                   <option value="TikTok">TikTok</option>
+                  <option value="Twitch">Twitch</option>
+                  <option value="Twitter">Twitter / X</option>
                 </select>
-                <select class="form-select" style="width:160px;">
+                <select id="creator-filter-status" class="form-select" style="width:160px;">
                   <option value="">All Statuses</option>
                   <option value="Safe">Safe</option>
                   <option value="Moderate Risk">Moderate Risk</option>
                   <option value="High Risk">High Risk</option>
                 </select>
+                <button class="btn btn-sm btn-secondary" id="btn-reset-creator-filters" title="Reset Filters"><i class="fas fa-undo"></i></button>
               </div>
             </div>
 
@@ -551,6 +768,94 @@
         </section>
 
         <!-- ==========================================================================
+             5B. SIDE-BY-SIDE CREATOR COMPARISON VIEW
+             ========================================================================== -->
+        <section id="view-comparison" class="app-view">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Side-by-Side <span class="gradient-text">Creator Comparison</span></h2>
+              <p class="page-subtext">Compare authenticity, risk score, and engagement anomalies between two creators simultaneously.</p>
+            </div>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" id="btn-export-comparison-csv" title="Export Comparison CSV"><i class="fas fa-file-csv"></i> Export Comparison CSV</button>
+              <button class="btn btn-primary btn-sm" id="btn-run-comparison"><i class="fas fa-bolt"></i> Re-Calculate Delta</button>
+            </div>
+          </div>
+
+          <!-- Selection Controls Bar -->
+          <div class="glass-card" style="padding:1.5rem;margin-bottom:2rem;">
+            <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center;">
+              <div>
+                <label class="form-label" style="font-weight:600;"><i class="fas fa-user text-neon"></i> Creator A (Subject Under Audit)</label>
+                <select id="compare-creator-a" class="form-select">
+                  <!-- Populated dynamically from PostgreSQL -->
+                </select>
+              </div>
+              <div style="text-align:center;padding-top:1.5rem;">
+                <div class="versus-badge">VS</div>
+              </div>
+              <div>
+                <label class="form-label" style="font-weight:600;"><i class="fas fa-user-check text-purple"></i> Creator B (Benchmark / Target)</label>
+                <select id="compare-creator-b" class="form-select">
+                  <!-- Populated dynamically from PostgreSQL -->
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Head-to-Head Cards Grid -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;">
+            <!-- Creator A Profile Card -->
+            <div id="card-creator-a" class="creator-compare-profile-card">
+              <!-- Rendered dynamically -->
+            </div>
+            <!-- Creator B Profile Card -->
+            <div id="card-creator-b" class="creator-compare-profile-card">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Radar Chart & Comparative Matrix Grid -->
+          <div style="display:grid;grid-template-columns:1.2fr 1.8fr;gap:2rem;margin-bottom:2rem;">
+            <!-- Radar Chart Card -->
+            <div class="glass-card chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title"><i class="fas fa-chart-radar text-neon"></i> Multi-Vector Forensic Radar</div>
+                <span class="badge badge-neon">5 Vectors</span>
+              </div>
+              <div class="chart-container" style="height:320px;">
+                <canvas id="chart-creator-comparison"></canvas>
+              </div>
+            </div>
+
+            <!-- Detailed Metrics Matrix Table -->
+            <div class="glass-card" style="padding:1.5rem;">
+              <h4 style="margin-bottom:1rem;"><i class="fas fa-table-columns text-neon"></i> Forensic Telemetry Matrix</h4>
+              <div class="table-responsive">
+                <table class="comparison-matrix-table">
+                  <thead>
+                    <tr>
+                      <th>Forensic Metric</th>
+                      <th id="th-creator-a-name">Creator A</th>
+                      <th id="th-creator-b-name">Creator B</th>
+                      <th>Variance / Verdict</th>
+                    </tr>
+                  </thead>
+                  <tbody id="comparison-matrix-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Forensic Comparative Verdict Card -->
+          <div id="comparison-verdict-card" class="glass-card" style="padding:1.75rem;border-left:4px solid var(--neon-blue);">
+            <!-- Rendered dynamically -->
+          </div>
+        </section>
+
+        <!-- ==========================================================================
              6. VIDEO MANAGEMENT VIEW
              ========================================================================== -->
         <section id="view-videos" class="app-view">
@@ -559,7 +864,10 @@
               <h2 class="page-title">Video <span class="gradient-text">Analytics</span> Library</h2>
               <p class="page-subtext">Track video views, likes, comments, and engagement manipulation.</p>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="showToast('Opening Add Video Form...')"><i class="fas fa-upload"></i> Add Video</button>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" id="btn-export-videos-csv" title="One-click CSV / Excel Export"><i class="fas fa-file-csv"></i> Export CSV</button>
+              <button class="btn btn-primary btn-sm" onclick="showToast('Opening Add Video Form...')"><i class="fas fa-upload"></i> Add Video</button>
+            </div>
           </div>
 
           <div class="cards-grid-4" id="video-cards-grid">
@@ -664,7 +972,10 @@
               <h2 class="page-title">Audit <span class="gradient-text">Reports</span> Module</h2>
               <p class="page-subtext">Generate, filter, and export forensic risk evaluation reports as PDF.</p>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="showToast('Creating New Forensic Report...')"><i class="fas fa-file-export"></i> Create New Report</button>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" id="btn-export-reports-csv" title="One-click CSV / Excel Export"><i class="fas fa-file-csv"></i> Export CSV</button>
+              <button class="btn btn-primary btn-sm" id="btn-reports-create-report"><i class="fas fa-file-export"></i> Create New Report</button>
+            </div>
           </div>
 
           <div class="glass-card" style="padding:1.5rem;">
@@ -723,30 +1034,157 @@
         <!-- ==========================================================================
              10. NOTIFICATIONS PAGE VIEW
              ========================================================================== -->
+        <!-- ==========================================================================
+             10. NOTIFICATIONS PAGE VIEW (Fully Upgraded with PostgreSQL Sync & Webhooks)
+             ========================================================================== -->
         <section id="view-notifications" class="app-view">
           <div class="page-header">
             <div>
-              <h2 class="page-title">System <span class="gradient-text">Notifications</span> & Alerts</h2>
-              <p class="page-subtext">Real-time alerts on fake accounts, threat thresholds, and report logs.</p>
+              <h2 class="page-title">System <span class="gradient-text">Notifications</span> & Alert Center</h2>
+              <p class="page-subtext">Real-time alerts on fake accounts, threat thresholds, bot surges, and outbound webhook dispatches.</p>
             </div>
-            <button class="btn btn-secondary btn-sm" onclick="showToast('All notifications marked as read!')"><i class="fas fa-check-double"></i> Mark All as Read</button>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+              <button class="btn btn-outline-neon btn-sm" id="btn-notif-test-alert"><i class="fas fa-radar"></i> Simulate Test Alert</button>
+              <button class="btn btn-secondary btn-sm" id="btn-export-notifications-csv" title="One-click CSV / Excel Export"><i class="fas fa-file-csv"></i> Export Alerts CSV</button>
+              <button class="btn btn-secondary btn-sm" id="btn-notif-mark-all-read"><i class="fas fa-check-double"></i> Mark All as Read</button>
+              <button class="btn btn-danger btn-sm" id="btn-notif-clear-all" title="Clear all notification history"><i class="fas fa-trash-can"></i> Clear All</button>
+            </div>
           </div>
 
-          <div class="glass-card" style="padding:1.5rem;max-width:800px;">
-            <div class="notif-item unread">
-              <div class="notif-title"><i class="fas fa-exclamation-triangle text-danger"></i> High-Risk Bot Farm Identified</div>
-              <div class="notif-desc">Creator <strong>@aria_sterling</strong> breached 88% fake followers threshold across 14,000 synthetic profiles.</div>
-              <div class="notif-time">10 minutes ago</div>
+          <!-- Top Telemetry Metrics Bar -->
+          <div class="notif-telemetry-grid">
+            <div class="notif-stat-pill">
+              <div class="notif-stat-icon" style="background:rgba(0,240,255,0.15);color:var(--neon-blue);"><i class="fas fa-bell"></i></div>
+              <div>
+                <div style="font-size:1.35rem;font-weight:700;" id="stat-notif-total">0</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);">Total Incident Logs</div>
+              </div>
             </div>
-            <div class="notif-item unread">
-              <div class="notif-title"><i class="fas fa-file-circle-check text-neon"></i> New Forensic Audit Report Generated</div>
-              <div class="notif-desc">Report REP-8801 for Elena FitLife has been compiled and is ready for PDF download.</div>
-              <div class="notif-time">1 hour ago</div>
+            <div class="notif-stat-pill">
+              <div class="notif-stat-icon" style="background:rgba(255,0,127,0.15);color:#ff007f;"><i class="fas fa-biohazard"></i></div>
+              <div>
+                <div style="font-size:1.35rem;font-weight:700;color:#ff007f;" id="stat-notif-critical">0</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);">Critical Threats (>80%)</div>
+              </div>
             </div>
-            <div class="notif-item">
-              <div class="notif-title"><i class="fas fa-user-pen text-purple"></i> Creator Profile Updated</div>
-              <div class="notif-desc">Marcus Vlogs status updated to Safe following manual audit verification.</div>
-              <div class="notif-time">1 day ago</div>
+            <div class="notif-stat-pill">
+              <div class="notif-stat-icon" style="background:rgba(245,158,11,0.15);color:#f59e0b;"><i class="fas fa-triangle-exclamation"></i></div>
+              <div>
+                <div style="font-size:1.35rem;font-weight:700;color:#f59e0b;" id="stat-notif-warning">0</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);">Warnings & Bot Bursts</div>
+              </div>
+            </div>
+            <div class="notif-stat-pill">
+              <div class="notif-stat-icon" style="background:rgba(157,78,221,0.15);color:var(--neon-purple);"><i class="fas fa-envelope-open-text"></i></div>
+              <div>
+                <div style="font-size:1.35rem;font-weight:700;color:var(--neon-purple);" id="stat-notif-unread">0</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);">Unread Active Alerts</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter, Search and Category Bar -->
+          <div class="glass-card" style="padding:1.25rem;margin-bottom:1.5rem;">
+            <div class="notif-filter-bar">
+              <!-- Category Tabs -->
+              <div class="notif-tab-pills">
+                <button type="button" class="notif-tab-btn active" data-notif-cat="All"><i class="fas fa-layer-group"></i> All Alerts</button>
+                <button type="button" class="notif-tab-btn" data-notif-cat="Threat"><i class="fas fa-biohazard text-pink"></i> Critical Threats</button>
+                <button type="button" class="notif-tab-btn" data-notif-cat="Bot Attack"><i class="fas fa-robot text-purple"></i> Bot Attacks</button>
+                <button type="button" class="notif-tab-btn" data-notif-cat="Report"><i class="fas fa-file-invoice text-neon"></i> Audit Reports</button>
+                <button type="button" class="notif-tab-btn" data-notif-cat="System"><i class="fas fa-server text-green"></i> System Logs</button>
+              </div>
+
+              <!-- Search & Read Filter -->
+              <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
+                <input type="text" id="notif-search-input" class="form-control" placeholder="Search alerts by handle, reason, ID..." style="max-width:240px;font-size:0.85rem;">
+                <select id="notif-filter-read" class="form-select" style="width:130px;font-size:0.85rem;">
+                  <option value="">All Statuses</option>
+                  <option value="false">Unread Only</option>
+                  <option value="true">Read Only</option>
+                </select>
+                <button class="btn btn-sm btn-secondary" id="btn-refresh-notifications" title="Refresh Live Alerts"><i class="fas fa-rotate"></i></button>
+              </div>
+            </div>
+
+            <!-- Dynamic Notification Cards Container -->
+            <div id="notifications-list-container">
+              <!-- Rendered dynamically by app.js from PostgreSQL -->
+            </div>
+          </div>
+
+          <!-- ==========================================================================
+               REAL-TIME EMAIL & WEBHOOK ALERTS CONFIGURATION (Score > 80% Trigger)
+               ========================================================================== -->
+          <div class="webhook-settings-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:1rem;">
+              <div>
+                <h3 style="font-size:1.15rem;margin:0 0 0.25rem 0;">
+                  <i class="fas fa-tower-broadcast text-neon"></i> Real-Time Email & Webhook Alert Rules
+                </h3>
+                <p style="color:var(--text-muted);font-size:0.825rem;margin:0;">
+                  Automatically broadcast webhook payloads and emergency alert dispatches whenever a monitored creator's suspicious risk score breaches <strong>80%</strong>.
+                </p>
+              </div>
+              <span class="badge badge-safe"><i class="fas fa-check-circle"></i> Daemon Dispatch Active</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+              <div>
+                <label class="form-label" style="font-size:0.85rem;"><i class="fas fa-link text-neon"></i> Outbound Webhook URL (Slack / Discord / SIEM Endpoint)</label>
+                <input type="url" id="webhook-url-input" class="form-control" value="https://hooks.slack.com/services/FDMS/ALERT_DISPATCH_CORE" placeholder="https://hooks.slack.com/services/...">
+                <small class="text-dim" style="font-size:0.75rem;margin-top:0.25rem;display:block;">HTTP POST payload dispatched immediately upon threat threshold breach.</small>
+              </div>
+
+              <div>
+                <label class="form-label" style="font-size:0.85rem;"><i class="fas fa-envelope text-purple"></i> Emergency Analyst Notification Email</label>
+                <input type="email" id="alert-email-input" class="form-control" value="security-alerts@fdms.cyber" placeholder="analyst@fdms.cyber">
+                <small class="text-dim" style="font-size:0.75rem;margin-top:0.25rem;display:block;">High-priority alerts sent with cryptographic audit trail.</small>
+              </div>
+            </div>
+
+            <!-- Threat Threshold Slider & Channels -->
+            <div style="display:grid;grid-template-columns:1.5fr 1fr auto;gap:1.5rem;align-items:center;background:rgba(0,0,0,0.25);padding:1rem 1.25rem;border-radius:var(--radius-md);margin-bottom:1.5rem;border:1px solid var(--border-color);">
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">
+                  <span style="font-size:0.85rem;font-weight:600;"><i class="fas fa-sliders text-pink"></i> Critical Risk Score Threshold:</span>
+                  <span id="alert-threshold-val" class="badge" style="background:#ff007f;color:#fff;font-weight:700;font-size:0.85rem;">80% Risk</span>
+                </div>
+                <input type="range" id="alert-threshold-slider" min="50" max="95" step="1" value="80" style="width:100%;accent-color:#ff007f;cursor:pointer;">
+                <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-dim);margin-top:0.2rem;">
+                  <span>50% (Strict)</span>
+                  <span style="color:#ff007f;font-weight:700;">80% (Default Critical)</span>
+                  <span>95% (Extreme Only)</span>
+                </div>
+              </div>
+
+              <div>
+                <span style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.4rem;">Active Channels:</span>
+                <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;cursor:pointer;margin-bottom:0.25rem;">
+                  <input type="checkbox" id="chk-channel-webhook" checked> <span>Outbound Webhook POST</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;cursor:pointer;">
+                  <input type="checkbox" id="chk-channel-email" checked> <span>Security Analyst Dispatch</span>
+                </label>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                <button class="btn btn-sm btn-outline-neon" id="btn-test-webhook-ping"><i class="fas fa-paper-plane"></i> Test Webhook Ping</button>
+                <button class="btn btn-sm btn-primary" id="btn-save-webhook-config"><i class="fas fa-floppy-disk"></i> Save Rules</button>
+              </div>
+            </div>
+
+            <!-- Outbound Webhook Activity Stream -->
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                <small class="text-neon" style="font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">
+                  <i class="fas fa-terminal"></i> Recent Outbound Webhook Alerts & Dispatch History (PostgreSQL system_logs)
+                </small>
+                <button class="btn btn-sm btn-secondary" id="btn-refresh-webhook-logs" style="font-size:0.75rem;padding:0.2rem 0.5rem;"><i class="fas fa-rotate"></i> Refresh</button>
+              </div>
+              <div class="webhook-log-stream" id="webhook-log-stream">
+                <!-- Populated dynamically -->
+              </div>
             </div>
           </div>
         </section>
@@ -763,30 +1201,85 @@
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 2fr;gap:2rem;">
+            <!-- Left Profile Summary Card -->
             <div class="glass-card" style="padding:2rem;text-align:center;">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" alt="Avatar" style="width:120px;height:120px;border-radius:50%;border:3px solid var(--neon-blue);margin-bottom:1rem;object-fit:cover;">
-              <h3>Alex Vance</h3>  
-              <div class="badge badge-purple" style="margin:0.5rem 0 1rem;">Lead Security Analyst</div>
-              <p class="text-muted" style="font-size:0.875rem;">ID: USR-90214 | Role: Admin Access</p>
+              <div style="position:relative;display:inline-block;margin-bottom:1rem;">
+                <img id="profile-card-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" alt="Avatar" style="width:130px;height:130px;border-radius:50%;border:3px solid var(--neon-blue);object-fit:cover;box-shadow:0 0 20px rgba(0,240,255,0.25);">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="showToast('Avatar picture synced with PostgreSQL profile.')" style="position:absolute;bottom:0;right:0;border-radius:50%;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;" title="Change Avatar">
+                  <i class="fas fa-camera" style="font-size:0.8rem;"></i>
+                </button>
+              </div>
+              <h3 id="profile-card-name" style="font-size:1.35rem;margin-bottom:0.25rem;">Alex Vance</h3>  
+              <div id="profile-card-role" class="badge badge-portal-analyst" style="margin:0.25rem 0 0.75rem;font-size:0.8rem;">Security Analyst</div>
+              <p id="profile-card-badge" class="text-muted" style="font-size:0.85rem;font-family:monospace;margin-bottom:1rem;">ID: SEC-9042 | Role: Analyst Access</p>
+              
+              <div style="background:rgba(0,0,0,0.25);border-radius:8px;padding:0.75rem;border:1px solid var(--border-color);text-align:left;font-size:0.8rem;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">
+                  <span class="text-muted">Account Status:</span>
+                  <span class="badge badge-safe">Active & Verified</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">
+                  <span class="text-muted">Database:</span>
+                  <span class="text-neon">PostgreSQL 18</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span class="text-muted">Security Tier:</span>
+                  <span style="color:#ffaa00;font-weight:600;">Level-4 Threat Unit</span>
+                </div>
+              </div>
             </div>
 
+            <!-- Right Profile Edit Form -->
             <div class="glass-card" style="padding:2rem;">
-              <form onsubmit="..."> 
-                <div class="form-group">
-                  <label class="form-label">Full Name</label>
-                  <input type="text" class="form-control"> 
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;border-bottom:1px solid var(--border-color);padding-bottom:1rem;">
+                <h4 style="margin:0;"><i class="fas fa-id-card text-neon"></i> Personal Profile & Governance Information</h4>
+                <span class="text-muted" style="font-size:0.8rem;">Stored in PostgreSQL <span class="text-neon">users</span> table</span>
+              </div>
+
+              <form id="form-user-profile"> 
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                  <div class="form-group">
+                    <label class="form-label"><i class="fas fa-user text-neon"></i> Full Legal Name</label>
+                    <input type="text" id="profile-name-input" class="form-control" placeholder="Alex Vance" required> 
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label"><i class="fas fa-envelope text-neon"></i> Email Address</label>
+                    <input type="email" id="profile-email-input" class="form-control" placeholder="analyst@fdms.cyber" required>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">Email Address</label>
-                  <input type="email" class="form-control">
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                  <div class="form-group">
+                    <label class="form-label"><i class="fas fa-phone text-neon"></i> Contact Phone</label>
+                    <input type="tel" id="profile-phone-input" class="form-control" placeholder="+1 (555) 019-2831">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label"><i class="fas fa-building text-neon"></i> Organization / Unit</label>
+                    <input type="text" id="profile-org-input" class="form-control" placeholder="Cyber Threat Analysis Unit">
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">Phone Number</label>
-                  <input type="tel" class="form-control" value="+1 (555) 019-2831">
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                  <div class="form-group">
+                    <label class="form-label"><i class="fas fa-id-badge text-muted"></i> Security Badge ID</label>
+                    <input type="text" id="profile-badge-input" class="form-control" readonly style="opacity:0.8;cursor:not-allowed;font-family:monospace;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label"><i class="fas fa-shield-alt text-muted"></i> Platform Role Clearance</label>
+                    <input type="text" id="profile-role-input" class="form-control" readonly style="opacity:0.8;cursor:not-allowed;">
+                  </div>
                 </div>
-                <div style="display:flex;gap:1rem;margin-top:1.5rem;">
-                  <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
-                  <button type="button" class="btn btn-secondary" onclick="showToast('Password reset modal triggered...')"><i class="fas fa-key"></i> Change Password</button>
+
+                <div style="display:flex;gap:1rem;margin-top:2rem;align-items:center;">
+                  <button type="submit" id="btn-save-profile" class="btn btn-primary" style="padding:0.65rem 1.75rem;">
+                    <i class="fas fa-save"></i> Save Changes
+                  </button>
+                  <button type="button" id="btn-open-change-pass" class="btn btn-secondary" style="padding:0.65rem 1.5rem;">
+                    <i class="fas fa-key"></i> Change Password
+                  </button>
+                  <span id="profile-save-status" style="display:none;font-size:0.85rem;color:#10b981;">
+                    <i class="fas fa-check-circle"></i> Saved in PostgreSQL!
+                  </span>
                 </div>
               </form>
             </div>
@@ -835,15 +1328,45 @@
             </div>
           </div>
 
+          <!-- Live PostgreSQL Registered Users Table -->
+          <div class="glass-card" style="padding:1.5rem;margin-top:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem;">
+              <div>
+                <h4 style="margin:0;"><i class="fas fa-users-gear text-neon"></i> PostgreSQL Registered Accounts Directory</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin:0.25rem 0 0 0;">Accounts stored live in PostgreSQL database (<span class="text-neon">users</span> table)</p>
+              </div>
+              <button class="btn btn-sm btn-outline-neon" id="refresh-admin-users-btn"><i class="fas fa-sync-alt"></i> Refresh from DB</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>User Profile</th>
+                    <th>Role / Portal</th>
+                    <th>Badge ID</th>
+                    <th>Organization</th>
+                    <th>Status</th>
+                    <th>Registered At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-table-body">
+                  <!-- Rendered dynamically from PostgreSQL users table -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- System Logs View -->
           <div class="glass-card" style="padding:1.5rem;margin-top:1.5rem;">
-            <h4 style="margin-bottom:1rem;"><i class="fas fa-terminal text-neon"></i> System Security Logs</h4>
-            <div style="background:#04050c;padding:1rem;border-radius:8px;font-family:monospace;font-size:0.85rem;color:#00ff9d;max-height:220px;overflow-y:auto;line-height:1.6;">
+            <h4 style="margin-bottom:1rem;"><i class="fas fa-terminal text-neon"></i> System Security Logs (PostgreSQL Audit Trail)</h4>
+            <div id="admin-system-logs-box" style="background:#04050c;padding:1rem;border-radius:8px;font-family:monospace;font-size:0.85rem;color:#00ff9d;max-height:220px;overflow-y:auto;line-height:1.6;">
               [2026-08-01 20:00:12] INFO: Neural network model v4.2 loaded into GPU memory.<br>
               [2026-08-01 20:00:45] SYSTEM: Database connection pool healthy (12/12 connections active).<br>
               [2026-08-01 20:01:02] ALERT: High risk threshold triggered for @aria_sterling (88.5%).<br>
               [2026-08-01 20:01:25] AUDIT: Report REP-8801 compiled and hashed with SHA-256.<br>
-              [2026-08-01 20:01:50] AUTH: User alex.vance@fdms.cyber granted admin session token.
+              [2026-08-01 20:01:50] AUTH: User admin@fdms.cyber granted master governance token.
             </div>
           </div>
         </section>
@@ -951,6 +1474,66 @@
             </div>
           </div>
 
+          <!-- Live PostgreSQL Engine Metrics & Real Data Viewer -->
+          <div class="glass-card" style="padding:1.75rem;margin-bottom:2rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;">
+              <div>
+                <h3 style="margin:0;"><i class="fas fa-server text-neon"></i> Live PostgreSQL Engine (<span id="live-db-name" class="gradient-text">fdms_db</span>)</h3>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin:0.25rem 0 0 0;" id="live-db-version">PostgreSQL 18.6 Engine Connected via Local Service</p>
+              </div>
+              <div style="display:flex;gap:0.75rem;align-items:center;">
+                <span class="db-status-pill" id="live-db-status-pill"><span class="db-status-dot"></span> PostgreSQL: Connected</span>
+                <button class="btn btn-sm btn-outline-neon" id="refresh-db-btn"><i class="fas fa-sync-alt"></i> Refresh DB Stats</button>
+              </div>
+            </div>
+
+            <div class="cards-grid-4" style="margin-bottom:1.5rem;" id="live-db-metrics-grid">
+              <div class="glass-card metric-card" style="padding:1rem;">
+                <div class="metric-icon-box"><i class="fas fa-database"></i></div>
+                <div>
+                  <div class="metric-val" id="metric-db-size">8.5 MB</div>
+                  <div class="metric-lbl">Database Size</div>
+                </div>
+              </div>
+              <div class="glass-card metric-card" style="padding:1rem;">
+                <div class="metric-icon-box metric-icon-purple"><i class="fas fa-table"></i></div>
+                <div>
+                  <div class="metric-val" id="metric-total-tables">6</div>
+                  <div class="metric-lbl">Active Relational Tables</div>
+                </div>
+              </div>
+              <div class="glass-card metric-card" style="padding:1rem;">
+                <div class="metric-icon-box metric-icon-green"><i class="fas fa-users"></i></div>
+                <div>
+                  <div class="metric-val" id="metric-total-users">4</div>
+                  <div class="metric-lbl">Registered Users</div>
+                </div>
+              </div>
+              <div class="glass-card metric-card" style="padding:1rem;">
+                <div class="metric-icon-box metric-icon-pink"><i class="fas fa-bolt"></i></div>
+                <div>
+                  <div class="metric-val" id="metric-total-detections">0</div>
+                  <div class="metric-lbl">AI Scans Saved</div>
+                </div>
+              </div>
+            </div>
+
+            <h4 style="margin-bottom:0.5rem;"><i class="fas fa-magnifying-glass text-neon"></i> Live PostgreSQL Table Inspector</h4>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">Query records directly from PostgreSQL tables in real-time:</p>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;" id="live-db-table-buttons">
+              <button class="btn btn-sm btn-primary table-select-btn" data-table="users"><i class="fas fa-users"></i> users (<span id="count-badge-users">...</span>)</button>
+              <button class="btn btn-sm btn-secondary table-select-btn" data-table="creators"><i class="fas fa-users-gear"></i> creators (<span id="count-badge-creators">...</span>)</button>
+              <button class="btn btn-sm btn-secondary table-select-btn" data-table="videos"><i class="fas fa-video"></i> videos (<span id="count-badge-videos">...</span>)</button>
+              <button class="btn btn-sm btn-secondary table-select-btn" data-table="reports"><i class="fas fa-file-invoice"></i> reports (<span id="count-badge-reports">...</span>)</button>
+              <button class="btn btn-sm btn-secondary table-select-btn" data-table="detections"><i class="fas fa-shield-virus"></i> detections (<span id="count-badge-detections">...</span>)</button>
+              <button class="btn btn-sm btn-secondary table-select-btn" data-table="system_logs"><i class="fas fa-terminal"></i> system_logs (<span id="count-badge-system_logs">...</span>)</button>
+            </div>
+
+            <div id="live-table-records-container" style="background:#050714;border:1px solid var(--border-color);border-radius:8px;padding:1rem;overflow-x:auto;max-height:360px;">
+              <div style="text-align:center;color:var(--text-muted);padding:1.5rem;"><i class="fas fa-spinner fa-spin"></i> Loading live PostgreSQL data...</div>
+            </div>
+          </div>
+
           <!-- 12 Tables Schema Grid Container -->
           <div id="db-schema-container">
             <!-- Rendered dynamically by database.js -->
@@ -981,6 +1564,241 @@
     </div>
   </aside>
 
+  <!-- ==========================================================================
+       MODALS: ADD CREATOR, INSPECT CREATOR, CHANGE PASSWORD
+       ========================================================================== -->
+
+  <!-- 1. ADD CREATOR MODAL (Saves to PostgreSQL) -->
+  <div id="modal-add-creator" class="modal-overlay">
+    <div class="modal-box" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-user-plus text-neon"></i> Register New Creator</h3>
+        <button class="modal-close" data-close-modal="modal-add-creator">&times;</button>
+      </div>
+      <form id="form-add-creator">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-signature text-neon"></i> Creator Display Name</label>
+            <input type="text" id="add-creator-name" class="form-control" placeholder="e.g. Maya Tech Reviews" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-at text-neon"></i> Social Media Handle</label>
+            <input type="text" id="add-creator-handle" class="form-control" placeholder="e.g. @mayatech" required>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-globe text-neon"></i> Platform</label>
+              <select id="add-creator-platform" class="form-select" required>
+                <option value="Instagram">Instagram</option>
+                <option value="YouTube">YouTube</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Twitch">Twitch</option>
+                <option value="Twitter">Twitter / X</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-tags text-neon"></i> Content Category</label>
+              <select id="add-creator-category" class="form-select" required>
+                <option value="Technology">Technology</option>
+                <option value="Fashion & Style">Fashion & Style</option>
+                <option value="Gaming">Gaming</option>
+                <option value="Fitness">Fitness</option>
+                <option value="Travel & Lifestyle">Travel & Lifestyle</option>
+                <option value="Finance & Crypto">Finance & Crypto</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-users text-neon"></i> Followers Count</label>
+              <input type="text" id="add-creator-followers" class="form-control" placeholder="e.g. 750K" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-chart-pie text-neon"></i> Engagement Rate</label>
+              <input type="text" id="add-creator-engagement" class="form-control" placeholder="e.g. 4.8%" required>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-shield-alt text-neon"></i> Initial Risk Status</label>
+              <select id="add-creator-status" class="form-select">
+                <option value="Safe">Safe</option>
+                <option value="Moderate Risk">Moderate Risk</option>
+                <option value="High Risk">High Risk</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-gauge-high text-neon"></i> Risk Score (0-100%)</label>
+              <input type="number" id="add-creator-score" class="form-control" min="0" max="100" placeholder="e.g. 15">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-add-creator">Cancel</button>
+          <button type="submit" id="btn-save-creator-submit" class="btn btn-primary"><i class="fas fa-database"></i> Save to PostgreSQL</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. INSPECT CREATOR MODAL -->
+  <div id="modal-inspect-creator" class="modal-overlay">
+    <div class="modal-box" style="max-width:580px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-magnifying-glass text-neon"></i> Creator Forensic Dossier</h3>
+        <button class="modal-close" data-close-modal="modal-inspect-creator">&times;</button>
+      </div>
+      <div class="modal-body" id="inspect-creator-content">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="text-muted" style="font-size:0.8rem;">Audit verified via FDMS AI Neural Net</span>
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-inspect-creator">Close Dossier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. CHANGE PASSWORD MODAL -->
+  <div id="modal-change-password" class="modal-overlay">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-key text-neon"></i> Change Security Password</h3>
+        <button class="modal-close" data-close-modal="modal-change-password">&times;</button>
+      </div>
+      <form id="form-change-password">
+        <div class="modal-body">
+          <div id="change-pass-error" style="display:none;background:rgba(239,68,68,0.15);border:1px solid #ef4444;color:#fca5a5;padding:0.75rem;border-radius:8px;font-size:0.85rem;margin-bottom:1rem;"></div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-lock text-muted"></i> Current Password</label>
+            <input type="password" id="input-curr-pass" class="form-control" placeholder="••••••••••••" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-lock text-neon"></i> New Secure Password</label>
+            <input type="password" id="input-new-pass" class="form-control" placeholder="Min 6 characters" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-check-double text-neon"></i> Confirm New Password</label>
+            <input type="password" id="input-confirm-pass" class="form-control" placeholder="Re-enter new password" required>
+          </div>
+        </div>
+        <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-change-password">Cancel</button>
+          <button type="submit" id="btn-submit-change-pass" class="btn btn-primary"><i class="fas fa-shield-alt"></i> Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. GENERATE AUDIT REPORT MODAL (Saves to PostgreSQL & Downloads PDF) -->
+  <div id="modal-generate-report" class="modal-overlay">
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-file-invoice text-neon"></i> Compile Forensic Threat Report</h3>
+        <button class="modal-close" data-close-modal="modal-generate-report">&times;</button>
+      </div>
+      <form id="form-generate-report">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-user-astronaut text-neon"></i> Target Creator / Account</label>
+            <input type="text" id="report-creator-input" class="form-control" placeholder="e.g. @aria_sterling or Creator Name" value="@aria_sterling" required>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-globe text-neon"></i> Target Platform</label>
+              <select id="report-platform-select" class="form-select" required>
+                <option value="Instagram">Instagram</option>
+                <option value="YouTube">YouTube</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Twitter / X">Twitter / X</option>
+                <option value="Twitch">Twitch</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-biohazard text-neon"></i> Threat Risk Score (%)</label>
+              <input type="number" id="report-score-input" class="form-control" min="0" max="100" step="0.1" value="88.5" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-magnifying-glass-chart text-neon"></i> Forensic Audit Reason & Trigger</label>
+            <input type="text" id="report-reason-input" class="form-control" placeholder="e.g. Abnormal follower velocity spike + 82% bot likes" value="Abnormal follower velocity spike + 84% synthetic bot engagement" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-shield-virus text-neon"></i> Forensic Verdict Status</label>
+            <select id="report-status-select" class="form-select" required>
+              <option value="Flagged">Flagged (High Threat)</option>
+              <option value="Under Review">Under Review (Moderate Risk)</option>
+              <option value="Verified Safe">Verified Safe (Low Risk)</option>
+            </select>
+          </div>
+          <div style="background:rgba(0, 240, 255, 0.06);border:1px solid rgba(0, 240, 255, 0.2);border-radius:8px;padding:0.75rem 1rem;font-size:0.85rem;color:var(--text-secondary);">
+            <i class="fas fa-info-circle text-neon"></i> Compiling this report permanently stores the forensic case in <strong>PostgreSQL</strong> (<span class="text-neon">reports</span> table) and immediately triggers an official cryptographic <strong>PDF download</strong> stored directly in your local <strong>Downloads</strong> folder.
+          </div>
+        </div>
+        <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-generate-report">Cancel</button>
+          <button type="submit" id="btn-submit-generate-report" class="btn btn-primary">
+            <i class="fas fa-file-pdf"></i> Save to PostgreSQL & Export PDF
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. FORENSIC NOTIFICATION DETAIL MODAL -->
+  <div id="modal-notification-detail" class="modal-overlay">
+    <div class="modal-box" style="max-width:620px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-shield-virus text-pink"></i> Incident Forensic Investigation</h3>
+        <button class="modal-close" data-close-modal="modal-notification-detail">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+          <div id="modal-notif-badges" style="display:flex;gap:0.5rem;align-items:center;">
+            <span class="badge" style="background:rgba(255,0,127,0.2);color:#ff007f;">CRITICAL</span>
+            <span class="badge badge-neon">Threat Alert</span>
+          </div>
+          <small class="text-dim" id="modal-notif-timestamp">2026-10-11</small>
+        </div>
+
+        <h4 id="modal-notif-title" style="font-size:1.2rem;margin-bottom:0.75rem;">High-Risk Bot Farm Identified</h4>
+        <p id="modal-notif-desc" style="color:var(--text-secondary);font-size:0.9rem;line-height:1.5;margin-bottom:1.25rem;">
+          Creator @aria_sterling breached 88% fake followers threshold across 14,000 synthetic profiles.
+        </p>
+
+        <!-- Incident Metadata Breakdown -->
+        <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border-color);border-radius:8px;padding:1rem;margin-bottom:1.25rem;">
+          <div style="font-size:0.8rem;font-weight:600;color:var(--neon-blue);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">
+            <i class="fas fa-microchip"></i> Telemetry & Vector Payload
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.85rem;">
+            <div><span class="text-muted">Target Account:</span> <strong id="modal-notif-target" class="text-neon">@aria_sterling</strong></div>
+            <div><span class="text-muted">Anomaly Threat Score:</span> <strong id="modal-notif-score" class="text-danger">88.5%</strong></div>
+            <div><span class="text-muted">Incident Origin IP:</span> <code id="modal-notif-ip">185.220.101.4</code></div>
+            <div><span class="text-muted">Database Log ID:</span> <code id="modal-notif-id">#1 (PostgreSQL)</code></div>
+          </div>
+        </div>
+
+        <!-- Raw JSON Payload Viewer -->
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.75rem;font-weight:600;color:var(--text-dim);margin-bottom:0.35rem;text-transform:uppercase;">Outbound SIEM / Webhook Payload</div>
+          <pre id="modal-notif-payload" style="background:rgba(5,8,20,0.9);border:1px solid var(--border-color);border-radius:6px;padding:0.75rem;font-size:0.75rem;color:#38bdf8;max-height:120px;overflow-y:auto;margin:0;"></pre>
+        </div>
+
+        <!-- Action Recommendations -->
+        <div style="background:rgba(255,0,127,0.06);border:1px solid rgba(255,0,127,0.25);border-radius:8px;padding:0.75rem 1rem;font-size:0.85rem;color:var(--text-secondary);">
+          <i class="fas fa-triangle-exclamation text-pink"></i> <strong>Recommended Remediation:</strong> Execute AI Neural Scan on target handle or compile formal cryptographic PDF Audit Report to initiate profile quarantine.
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:space-between;gap:0.75rem;">
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-notification-detail">Dismiss</button>
+        <div style="display:flex;gap:0.5rem;">
+          <button type="button" class="btn btn-outline-neon btn-sm" id="modal-btn-scan-target"><i class="fas fa-radar"></i> Run Detection Engine</button>
+          <button type="button" class="btn btn-primary btn-sm" id="modal-btn-compile-report"><i class="fas fa-file-pdf"></i> Compile Audit PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Scripts -->
@@ -989,6 +1807,7 @@
 <script src="js/charts.js"></script>
 <script src="js/detection.js"></script>
 <script src="js/database.js"></script>
+<script src="js/api.js"></script>
 <script src="js/app.js"></script>
 
 </body>

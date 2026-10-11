@@ -196,5 +196,103 @@ window.FDMSCharts = {
         }
       }
     };
+  },
+
+  // Spike Monthly Chart during Live Bot Attack Simulation
+  spikeMonthlyChart: function(burstCount = 25000) {
+    if (!this.instances.monthlyStats) return;
+    const chart = this.instances.monthlyStats;
+    // Current month is Aug (last data point index 7)
+    chart.data.datasets[0].data[7] = 1240 + Math.round(burstCount / 10);
+    chart.data.datasets[1].data[7] = 930 + Math.round(burstCount / 25);
+    chart.update();
+  },
+
+  resetMonthlyChart: function() {
+    if (!this.instances.monthlyStats) return;
+    const chart = this.instances.monthlyStats;
+    chart.data.datasets[0].data[7] = 1240;
+    chart.data.datasets[1].data[7] = 930;
+    chart.update();
+  },
+
+  // Side-by-Side Creator Comparison Radar Chart
+  initCreatorComparisonChart: function(creatorA, creatorB) {
+    const ctx = document.getElementById('chart-creator-comparison')?.getContext('2d');
+    if (!ctx) return;
+
+    if (this.instances.comparisonRadar) this.instances.comparisonRadar.destroy();
+
+    // Compute realistic forensic vector ratings (0-100 higher is better / safer)
+    const riskA = parseFloat(creatorA?.risk_score) || 50;
+    const riskB = parseFloat(creatorB?.risk_score) || 50;
+
+    const dataA = [
+      Math.max(10, Math.round(100 - riskA * 0.95)),  // Audience Legitimacy
+      Math.max(12, Math.round(100 - riskA * 0.88)),  // Engagement Naturalness
+      Math.max(15, Math.round(100 - riskA * 1.05)),  // Comment Quality
+      Math.max(20, Math.round(100 - riskA * 0.75)),  // Velocity Consistency
+      Math.max(10, Math.round(100 - riskA * 0.92))   // Platform Compliance
+    ];
+
+    const dataB = [
+      Math.max(10, Math.round(100 - riskB * 0.95)),
+      Math.max(12, Math.round(100 - riskB * 0.88)),
+      Math.max(15, Math.round(100 - riskB * 1.05)),
+      Math.max(20, Math.round(100 - riskB * 0.75)),
+      Math.max(10, Math.round(100 - riskB * 0.92))
+    ];
+
+    this.instances.comparisonRadar = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: [
+          'Audience Legitimacy',
+          'Engagement Naturalness',
+          'Comment Quality',
+          'Velocity Consistency',
+          'Platform Compliance'
+        ],
+        datasets: [
+          {
+            label: creatorA?.name || 'Creator A',
+            data: dataA,
+            borderColor: '#ff007f',
+            backgroundColor: 'rgba(255, 0, 127, 0.25)',
+            borderWidth: 2,
+            pointBackgroundColor: '#ff007f',
+            pointRadius: 4
+          },
+          {
+            label: creatorB?.name || 'Creator B',
+            data: dataB,
+            borderColor: '#00f0ff',
+            backgroundColor: 'rgba(0, 240, 255, 0.25)',
+            borderWidth: 2,
+            pointBackgroundColor: '#00f0ff',
+            pointRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 12 } }
+          }
+        },
+        scales: {
+          r: {
+            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+            grid: { color: 'rgba(255, 255, 255, 0.08)' },
+            pointLabels: { color: '#94a3b8', font: { size: 11 } },
+            ticks: { display: false, min: 0, max: 100 }
+          }
+        }
+      }
+    });
   }
 };
+

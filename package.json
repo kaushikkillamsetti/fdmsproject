@@ -1,0 +1,29 @@
+{
+  "name": "fdms-platform",
+  "version": "2.0.0",
+  "description": "Fake Detection Management System (FDMS) - Full Stack with PostgreSQL and Multi-Role Auth",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "node server/server.js",
+    "seed": "node server/db/seed.js",
+    "test-db": "node server/db/test-connection.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  },
+  "keywords": [
+    "fdms",
+    "bot-detection",
+    "postgresql",
+    "multi-role-auth",
+    "cybersecurity"
+  ],
+  "author": "FDMS Cyber Security",
+  "license": "ISC"
+}
